@@ -15,7 +15,7 @@ VoltX allows users to set a custom target battery percentage (e.g., 80%) through
 
 ### Key Architectural Innovation: DependencyGuard
 VoltX features a proprietary **DependencyGuard** failure-management system that tracks prerequisites, blockers, paused operations, downstream impacts, and recovery protocols. If Wi-Fi drops, backend APIs fail, or the ESP32 disconnects, DependencyGuard immediately detects the root cause, applies safe fallback actions, and records the telemetry incident.`,
-    image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1200&q=80',
+    image: '/voltx.png',
     schematicImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
     pcbLayoutImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80',
     bom: [
@@ -246,9 +246,9 @@ const INITIAL_PROFILE: EngineerProfile = {
 };
 
 const STORAGE_KEYS = {
-  PROJECTS: 'pcb_portfolio_projects_v5',
-  ACHIEVEMENTS: 'pcb_portfolio_achievements_v5',
-  PROFILE: 'pcb_portfolio_profile_v5'
+  PROJECTS: 'pcb_portfolio_projects_v6',
+  ACHIEVEMENTS: 'pcb_portfolio_achievements_v6',
+  PROFILE: 'pcb_portfolio_profile_v6'
 };
 
 export class StorageService {
@@ -265,7 +265,14 @@ export class StorageService {
         localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([REAL_PROJECTS[0]]));
         return [REAL_PROJECTS[0]];
       }
-      return parsed;
+      // Ensure VoltX uses official hardware photo
+      const normalized = parsed.map((p: Project) => {
+        if (p.id === 'proj-voltx' && (!p.image || p.image.includes('unsplash'))) {
+          return { ...p, image: '/voltx.png' };
+        }
+        return p;
+      });
+      return normalized;
     } catch {
       return [REAL_PROJECTS[0]];
     }
