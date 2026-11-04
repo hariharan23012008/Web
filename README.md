@@ -1,50 +1,44 @@
-# ⚡ Electronics & VLSI Engineering PCB Digital Laboratory Portfolio
+# ⚡ Hariharan K | Electronics & Hardware Engineering Portfolio
 
-> **"An Electronics Engineer's Portfolio Built Inside a Circuit Board."**
+> **Live Website:** [https://hariharan23012008.github.io/Web/](https://hariharan23012008.github.io/Web/)
 
-A premium, interactive, 3D Printed Circuit Board (PCB) portfolio website engineered for Electronics, VLSI, and Embedded Systems engineers.
-
----
-
-## 🌟 Key Features
-
-### 1. 3D PCB Landing Page & Cinematic Dive-in
-- **Interactive 3D Motherboard**: Built with Three.js rendering a realistic 4-layer FR-4 circuit board (`#0B4D38`) with gold-plated pads, copper routing traces, silkscreen text, and mounting holes.
-- **Component Inspection Tooltip**: Hovering over components (STM32F407 MCU, DDR3 RAM, 16MHz Crystal Oscillator, Buck Regulator, USB-C Port, GPIO Headers, 0805 SMD Resistors/Capacitors) highlights them and displays real-time engineering specs.
-- **Pulsing Diagnostics**: Moving electron signal pulses traveling along copper traces and blinking RX/TX LEDs.
-- **Cinematic 3D Entry Animation**: Clicking the motherboard triggers a capacitor charging audio sweep and an acceleration camera dive into the silicon die, transitioning smoothly into the digital workstation.
-
-### 2. Digital Engineering Workstation Dashboard
-- **Live Phosphor Oscilloscope**: Interactive real-time dual-channel oscilloscope generating Sine, Square, Triangle, PWM, and SPI signals with adjustable frequency, voltage gain, trigger modes, and real-time Web Audio API tone synthesis.
-- **PROJECTS**: Presented as IC Dual In-line (DIP) and QFP packages with metallic pins. Each project features an interactive modal with architecture breakdown, circuit schematics, 4-layer PCB Gerber viewer with layer toggles, Bill of Materials (BOM) table, source code, and demo video links.
-- **SOURCE CODE LAB**: Syntax-highlighted firmware viewer for Verilog HDL, Embedded C, C++, Python, and Arduino. Includes an interactive Digital Logic Analyzer timing diagram simulator with clock cycle stepping!
-- **PCB DESIGN LAB**: KiCad/Altium EDA canvas simulator with 6-layer manager (Silkscreen, Top Copper, Ground Plane, Power Plane, Bottom Copper, Excellon Drills) and an interactive Net Highlighter (GND, 3V3, 5V, SPI, I2C, USB).
-- **HARDWARE BENCH**: Showcase of robotic motor actuators, ultra-low power LoRaWAN environmental nodes, FPGA coprocessors, and isolated biomedical sensors.
-- **ACHIEVEMENTS**: Silicon medal badges for hackathon wins, IEEE research papers, and Cadence certifications with particle confetti celebration.
-- **ABOUT ME & CALCULATORS**: Complete engineering bio, education, 4-quadrant skill matrix, interactive 4-band resistor color code calculator, and IPC-2221 PCB trace width calculator.
-- **CONTACT TERMINAL**: RF transceiver-themed console with carrier frequency selection, CRC-32 acknowledgment, and direct communication links.
-- **ADMIN DASHBOARD**: Passcode-protected (`admin123`) content management console to add/edit/delete projects, upload images, export/import JSON database backups, and restore factory datasets.
+Welcome to the official digital engineering portfolio of **Hariharan K**, 2nd-year Electronics Engineering student at **Chennai Institute of Technology (CIT)**. Specializing in **Embedded Systems, VLSI Design, Robotics, IoT, and Custom Hardware Development**.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Featured Engineering Projects
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Vite 8
-- **3D Graphics**: Three.js (WebGL procedural shaders, PBR materials, raycasting)
-- **Audio**: Web Audio API Procedural Synthesizer (Zero audio file dependencies, zero latency)
-- **Icons & Visuals**: Lucide Icons, Canvas Confetti
+### 1. VoltX: IoT-Based Smart Charging Cutoff & Battery Health Optimization System
+- **Repository:** [hariharan23012008/VOLTX](https://github.com/hariharan23012008/VOLTX)
+- **Architecture:** ESP32-WROOM-32, optocoupler-isolated 10A SPDT relay module, Android mobile telemetry app, and proprietary **DependencyGuard** failure recovery logic.
+- **Hardware Features:** Real-time software-defined charging threshold cutoff (e.g. 80% charge level), inductive back-EMF flyback suppression, and automated fail-safe telemetry.
+- **Photo:** `public/voltx.png`
 
 ---
 
-## 🚀 Running the Project
+### 2. DriftSense: Hybrid Siamese SEM Localization for DRAM & FinFETs
+- **Hackathon:** Applied Materials Semiconductor Hackathon 2026
+- **Repository:** [hariharan23012008/I4C_Drift_sense_D_RAM_submission-1](https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1)
+- **Architecture:** Custom 4-Layer Bottlenecked ResNet Siamese Triplet Loss Model (TLM) fused with 3-Level Image Pyramid Normalized Cross-Correlation (NCC).
+- **Key Benchmarks:**
+  - **96.7% Localization Accuracy** on 60 physical DRAM semiconductor images.
+  - **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
+  - **1.38 MB Model Footprint** for real-time edge semiconductor metrology tools.
+  - **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.
+- **Photo:** `public/driftsense.jpg`
 
-```bash
-# Navigate to the workspace
-cd "C:/Users/HARIHARAN K/.gemini/antigravity/scratch/electronics-pcb-portfolio"
+---
 
-# Start Vite Dev Server
-npm run dev
-```
+## 🛠️ Tech Stack & Tools
 
-Visit: `http://localhost:3000/` in your browser.
-Admin passcode: `admin123`
+- **Hardware & Embedded:** ESP32, STM32, Arduino, KiCad PCB Design, Circuit Prototyping, Relay Automation, Sensors
+- **Semiconductor & AI:** PyTorch 2.x, Custom 4-Layer ResNet, Triplet Loss Model (TLM), SEM Image Processing, OpenCV, NumPy
+- **Languages:** C, C++, Python, TypeScript, HTML/CSS
+- **Web Portfolio:** React 19, Three.js 3D WebGL Motherboard, Tailwind CSS v4, Vite 8
+
+---
+
+## 🌐 Live Access
+
+Visit the interactive portfolio online at:  
+👉 **[https://hariharan23012008.github.io/Web/](https://hariharan23012008.github.io/Web/)**
