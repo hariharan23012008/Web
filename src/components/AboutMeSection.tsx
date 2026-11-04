@@ -74,10 +74,6 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-zinc-700/80 pb-6 relative z-10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-600 text-xs text-zinc-300 font-medium mb-2.5">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Chennai Institute of Technology (CIT)
-            </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
               About Me <span className="text-zinc-400 font-normal">– Hariharan</span>
             </h1>
