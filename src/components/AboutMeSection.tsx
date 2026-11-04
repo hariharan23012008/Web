@@ -149,15 +149,15 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
               </div>
               
               <p className="text-base text-zinc-200 leading-relaxed font-normal">
-                I am <strong className="text-white font-bold">Hariharan</strong>, a passionate second-year Electronics Engineering student at <strong className="text-white font-bold">Chennai Institute of Technology (CIT)</strong>, with a strong interest in <span className="text-white font-medium underline underline-offset-4 decoration-zinc-500">Embedded Systems, VLSI, Robotics, IoT, and Hardware Development</span>. 
+                I am <strong className="text-white font-bold">Hariharan</strong>, a passionate and innovative Electronics Engineer with a strong interest in <span className="text-white font-medium underline underline-offset-4 decoration-zinc-500">Embedded Systems, VLSI Design, Robotics, IoT, and Hardware Development</span>.
               </p>
 
               <p className="text-base text-zinc-300 leading-relaxed mt-4 font-normal">
-                I have hands-on experience in developing innovative projects such as <strong className="text-white font-semibold">VoltX Smart Charging Controller</strong>, <strong className="text-white font-semibold">AI-powered Retail Intelligence System</strong>, <strong className="text-white font-semibold">Industrial Safety Automation</strong>, <strong className="text-white font-semibold">ESP32-based Quadruped Pet Robot</strong>, and <strong className="text-white font-semibold">PCB Design</strong>.
+                I enjoy designing and developing real-world engineering solutions through hands-on projects, including <strong className="text-white font-semibold">smart charging controllers</strong>, <strong className="text-white font-semibold">AI-powered retail intelligence systems</strong>, <strong className="text-white font-semibold">industrial safety automation</strong>, <strong className="text-white font-semibold">ESP32-based robotics</strong>, and <strong className="text-white font-semibold">custom PCB designs</strong>. I have experience working with microcontrollers, sensors, embedded programming, hardware integration, and system development. I am always eager to explore emerging technologies, take on challenging problems, and transform creative ideas into practical innovations.
               </p>
 
               <p className="text-base text-zinc-300 leading-relaxed mt-4 font-normal">
-                I have also participated in technical competitions, including the <strong className="text-white font-semibold">FAR AWAY 2026 Hackathon</strong>, <strong className="text-white font-semibold">Applied Materials Semiconductor Hackathon</strong>, and <strong className="text-white font-semibold">NXP Cup India 2026</strong>. With practical experience in microcontrollers, sensors, embedded programming, hardware integration, and system design, I am passionate about transforming real-world problems into innovative engineering solutions while continuously expanding my technical knowledge.
+                Apart from my technical interests, I enjoy <strong className="text-white font-medium">playing badminton</strong>, <strong className="text-white font-medium">drawing</strong>, <strong className="text-white font-medium">creating art and craft projects</strong>, and participating in various extracurricular activities. I love exploring my creativity, learning new skills, and maintaining a balance between technical development and personal interests.
               </p>
             </div>
 

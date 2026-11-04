@@ -194,7 +194,7 @@ const INITIAL_PROFILE: EngineerProfile = {
   name: 'Hariharan K',
   title: 'Electronics, IoT & VLSI Systems Engineer',
   headline: 'Specializing in IoT Hardware, ESP32 Firmware, Semiconductor Metrology & Edge AI',
-  about: 'Electronics & Embedded Systems Engineer and creator of VoltX (IoT Smart Charging Cutoff with DependencyGuard) and DriftSense (Hybrid Siamese SEM Semiconductor Sub-Pixel Metrology). Passionate about combining bare-metal microcontroller hardware, IoT cloud telemetry, and lightweight AI architectures for real-world engineering solutions.',
+  about: 'I am Hariharan, a passionate and innovative Electronics Engineer with a strong interest in Embedded Systems, VLSI Design, Robotics, IoT, and Hardware Development. I enjoy designing and developing real-world engineering solutions through hands-on projects, including smart charging controllers, AI-powered retail intelligence systems, industrial safety automation, ESP32-based robotics, and custom PCB designs. I have experience working with microcontrollers, sensors, embedded programming, hardware integration, and system development. Apart from my technical interests, I enjoy playing badminton, drawing, creating art and craft projects, and participating in various extracurricular activities.',
   education: [
     {
       degree: 'B.E. in Electronics and Communication Engineering',
