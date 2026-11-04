@@ -82,64 +82,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div className="min-h-screen bg-[#121316] text-[#e4e4e7] font-sans relative selection:bg-white selection:text-black">
       
-      {/* Top Header - White and Gray Palette */}
-      <header className="sticky top-0 z-40 bg-[#121316]/90 backdrop-blur-xl border-b border-zinc-800 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          
-          {/* Logo & Call Sign */}
-          <div className="flex items-center space-x-3">
-            <div 
-              onClick={() => { sound.playSignalPulse(); onOpen3DPCB(); }}
-              className="p-2 rounded-xl bg-zinc-900 border border-zinc-700 cursor-pointer hover:border-zinc-500 hover:scale-105 transition-all"
-              title="Click to view 3D Motherboard"
-            >
-              <Cpu className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-base font-bold text-white tracking-wide">
-                  Hariharan K
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
-                  CIT Chennai
-                </span>
-              </div>
-              <div className="text-xs text-zinc-400">
-                Electronics & Hardware Engineering
-              </div>
-            </div>
-          </div>
-
-          {/* Right Action Tools */}
-          <div className="flex items-center space-x-3">
-            <a
-              href="https://github.com/hariharan23012008"
-              target="_blank"
-              rel="noreferrer"
-              className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 hover:text-white transition-all"
-            >
-              <GithubIcon className="w-3.5 h-3.5 text-white" />
-              <span>@hariharan23012008</span>
-            </a>
-
-            <button
-              onClick={() => {
-                sound.playRelayClick();
-                onOpen3DPCB();
-              }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 border border-white text-xs font-semibold transition-all shadow-sm active:scale-95"
-            >
-              <Eye className="w-4 h-4" />
-              <span>View 3D PCB Board</span>
-            </button>
-          </div>
-
-        </div>
-
-        {/* Divider line */}
-        <div className="w-full h-[1px] bg-zinc-800" />
-      </header>
-
       {/* Main Workstation Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         {/* About Me - Hariharan Core Column */}
