@@ -13,3 +13,4 @@ if %ERRORLEVEL% EQU 0 (
     echo [NOTE] If prompted by GitHub, sign in via your browser window to authorize.
 )
 pause
+
