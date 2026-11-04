@@ -35,7 +35,6 @@ VoltX allows users to set a custom target battery percentage (e.g., 80%) through
 ### Key Architectural Innovation: DependencyGuard
 Features a proprietary DependencyGuard failure-management system that tracks prerequisites, blockers, and recovery protocols.`,
     image: '/voltx.png',
-    schematicImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
     bom: [
       { ref: 'U1', name: 'ESP32-WROOM-32 Dual-Core MCU', package: 'SMD Module', footprint: 'ESP32-Module', qty: 1, description: '240MHz Wi-Fi & BLE SoC executing relay control firmware' },
       { ref: 'K1', name: 'Songle 5V 10A SPDT Relay Module', package: 'Through-Hole', footprint: 'Relay-SPDT', qty: 1, description: 'Optocoupler-isolated AC/DC charging power cutoff' },
@@ -108,10 +107,6 @@ void loop() {
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-800 pb-5">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 font-medium mb-2">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            Hardware & IoT Portfolio
-          </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
             <Cpu className="w-8 h-8 text-white" />
             Featured Projects
@@ -119,26 +114,6 @@ void loop() {
           <p className="text-sm text-zinc-400 mt-1 max-w-xl font-normal">
             Touch or click any project picture below to view full hardware schematics, firmware code, and bill of materials.
           </p>
-        </div>
-
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-1.5 p-1 bg-zinc-900 border border-zinc-700 rounded-xl">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => {
-                setSelectedCategory(cat);
-                sound.playRelayClick();
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                selectedCategory === cat
-                  ? 'bg-white text-zinc-950 shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
         </div>
       </div>
 

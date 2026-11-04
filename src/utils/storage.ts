@@ -16,8 +16,6 @@ VoltX allows users to set a custom target battery percentage (e.g., 80%) through
 ### Key Architectural Innovation: DependencyGuard
 VoltX features a proprietary **DependencyGuard** failure-management system that tracks prerequisites, blockers, paused operations, downstream impacts, and recovery protocols. If Wi-Fi drops, backend APIs fail, or the ESP32 disconnects, DependencyGuard immediately detects the root cause, applies safe fallback actions, and records the telemetry incident.`,
     image: '/voltx.png',
-    schematicImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
-    pcbLayoutImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80',
     bom: [
       { ref: 'U1', name: 'ESP32-WROOM-32 Dual-Core MCU', package: 'SMD Module', footprint: 'ESP32-Module', qty: 1, description: '240MHz Wi-Fi & BLE SoC executing relay control firmware' },
       { ref: 'K1', name: 'Songle 5V 10A SPDT Relay Module', package: 'Through-Hole', footprint: 'Relay-SPDT', qty: 1, description: 'Optocoupler-isolated AC/DC charging power cutoff' },

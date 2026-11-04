@@ -1,84 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import type { Project, Achievement, EngineerProfile } from '../types';
+import React from 'react';
+import type { Project, EngineerProfile } from '../types';
 import { ProjectsSection } from './ProjectsSection';
-import { HardwareLab } from './HardwareLab';
-import { AchievementsSection } from './AchievementsSection';
 import { AboutMeSection } from './AboutMeSection';
-import { ContactSection } from './ContactSection';
-import { GitHubRepositories } from './GitHubRepositories';
-import { ProfileImporterModal } from './ProfileImporterModal';
-import { OscilloscopeWidget } from './OscilloscopeWidget';
-import { AdminDashboard } from './AdminDashboard';
 import { sound } from '../utils/audio';
-import { GithubIcon, LinkedinIcon } from './SocialIcons';
-import { 
-  Cpu, Bot, Trophy, User, Radio, 
-  Settings, Volume2, VolumeX, Eye, ArrowUp, Activity, GitBranch, Zap
-} from 'lucide-react';
+import { Cpu, ArrowUp } from 'lucide-react';
 
 interface DashboardProps {
   projects: Project[];
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
-  achievements: Achievement[];
-  setAchievements: React.Dispatch<React.SetStateAction<Achievement[]>>;
+  achievements?: any[];
+  setAchievements?: any;
   profile: EngineerProfile;
-  setProfile: React.Dispatch<React.SetStateAction<EngineerProfile>>;
+  setProfile?: any;
   onOpen3DPCB: () => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
-  projects, setProjects,
-  achievements, setAchievements,
-  profile, setProfile,
+  projects,
+  profile,
   onOpen3DPCB
 }) => {
-  const [activeNav, setActiveNav] = useState('projects');
-  const [isMuted, setIsMuted] = useState(sound.isMuted);
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [showProfileImporter, setShowProfileImporter] = useState(false);
-  const [clockTime, setClockTime] = useState('');
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Live RTC Clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setClockTime(now.toTimeString().split(' ')[0] + ' UTC+5:30');
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Scroll Progress Tracker
-  useEffect(() => {
-    const handleScroll = () => {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
-      setScrollProgress(progress);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleNavClick = (sectionId: string) => {
-    sound.playRelayClick();
-    setActiveNav(sectionId);
-    const el = document.getElementById(sectionId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const navItems = [
-    { id: 'projects', label: 'PROJECTS', icon: Cpu },
-    { id: 'github', label: 'REPOSITORIES', icon: GitBranch },
-    { id: 'hardware', label: 'HARDWARE LAB', icon: Bot },
-    { id: 'achievements', label: 'ACHIEVEMENTS', icon: Trophy },
-    { id: 'about', label: 'ABOUT ME', icon: User },
-    { id: 'contact', label: 'CONTACT', icon: Radio },
-  ];
-
   return (
     <div className="min-h-screen bg-[#121316] text-[#e4e4e7] font-sans relative selection:bg-white selection:text-black">
       
@@ -122,28 +63,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <ArrowUp className="w-4 h-4" />
         </button>
       </div>
-
-      {/* Admin Dashboard Modal */}
-      {showAdmin && (
-        <AdminDashboard
-          projects={projects}
-          setProjects={setProjects}
-          achievements={achievements}
-          setAchievements={setAchievements}
-          profile={profile}
-          setProfile={setProfile}
-          onClose={() => setShowAdmin(false)}
-        />
-      )}
-
-      {/* LinkedIn Profile Importer Modal */}
-      {showProfileImporter && (
-        <ProfileImporterModal
-          currentProfile={profile}
-          onProfileUpdated={(updated) => setProfile(updated)}
-          onClose={() => setShowProfileImporter(false)}
-        />
-      )}
 
     </div>
   );
