@@ -78,7 +78,84 @@ void loop() {
     ]
   };
 
-  const projectList = (projects && projects.length > 0) ? projects : [defaultVoltXProject];
+  const defaultDriftSenseProject: Project = {
+    id: 'proj-driftsense',
+    title: 'DriftSense: Hybrid Siamese SEM Localization for DRAM & FinFETs',
+    subtitle: 'Applied Materials Semiconductor Hackathon 2026 // Custom 4-Layer ResNet Triplet Loss Model',
+    category: 'VLSI',
+    description: 'A hybrid edge-AI computer vision pipeline combining 3-Level Image Pyramid Normalized Cross-Correlation (NCC) with a custom 4-layer ResNet Siamese network for sub-pixel semiconductor defect metrology.',
+    longDescription: `### The Problem Statement:
+In modern semiconductor foundries, locating a specific microscopic reference patch (e.g., a single FinFET or DRAM memory cell) within a massive, highly-degraded Scanning Electron Microscope (SEM) search image is an immense challenge:
+* **Extreme Noise:** SEM imaging physics naturally introduces catastrophic Poisson shot noise, Gaussian read noise, focal blur, multiplicative speckle, contrast drift, and stage vibration jitter.
+* **Periodic Decoys:** Semiconductor chips (especially DRAM arrays) consist of millions of perfectly repeating, identical-looking structures.
+* **Classical Fragility:** Traditional mathematical Computer Vision algorithms (like pure Template Matching) routinely fail because they lack the semantic understanding to differentiate the true target from a noisy periodic decoy.
+
+### The Solution:
+We engineered a **Hybrid Fusion Pipeline** that runs classical Normalized Cross-Correlation (NCC) search through a **3-Level Image Pyramid**, disambiguated by a **Siamese Triplet Loss Model (TLM)** built on a lightweight **Custom 4-Layer ResNet** encoder.
+
+By combining the raw speed of classical coarse search with the deep semantic understanding of a learned heatmap regressor, we created a system capable of shattering classical accuracy baselines while maintaining strict real-time edge-device constraints (~44ms average on CPU, 1.38MB model weights).
+
+### Key Architectural Benchmark Achievements:
+* **96.7% Localization Accuracy** on 60 physical DRAM semiconductor images.
+* **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
+* **1.38 MB Model Footprint** allowing direct integration onto real-time edge semiconductor metrology tools.
+* **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.`,
+    image: '/driftsense.jpg',
+    bom: [
+      { ref: 'SEM1', name: 'Scanning Electron Microscope (SEM) Image Stream', package: 'Nanoscale Imager', footprint: '1000x1000 Grayscale', qty: 1, description: '1-Channel grayscale semiconductor wafer surface scan' },
+      { ref: 'AI-ENG1', name: 'Custom 4-Layer ResNet Siamese TLM Backbone', package: 'PyTorch 2.x', footprint: '128-D Embedding Space', qty: 1, description: 'Triplet Loss metric learning with hard periodic negative mining' },
+      { ref: 'PYRAMID1', name: '3-Level Image Pyramid & Multi-Scale NCC Search', package: 'OpenCV / NumPy', footprint: 'Coarse-to-Fine Pipeline', qty: 1, description: 'Fast global screening (Level 0) to local sub-pixel refinement (Level 2)' },
+      { ref: 'CPU1', name: 'Edge Industrial Host Processor', package: 'x86 CPU Execution', footprint: 'Zero GPU Dependency', qty: 1, description: 'Real-time foundry tool execution (~44ms average latency)' }
+    ],
+    codeSnippet: {
+      language: 'python',
+      filename: 'driftsense_resnet_encoder.py',
+      code: `# Custom 4-Layer Bottlenecked ResNet Siamese Encoder for Semiconductor Layouts
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Custom4LayerResNet(nn.Module):
+    def __init__(self, embedding_dim=128):
+        super(Custom4LayerResNet, self).__init__()
+        # Layer 1: SEM Grayscale Feature Extraction
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
+        self.bn1   = nn.BatchNorm2d(32)
+        
+        # Layer 2: Residual Block A (Geometry vs Noise Disambiguation)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1)
+        self.bn2   = nn.BatchNorm2d(64)
+        
+        # Layer 3: Residual Block B (Periodic Decoy Invariance)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+        self.bn3   = nn.BatchNorm2d(128)
+        
+        # Layer 4: Semantic Embedding Projection
+        self.conv4 = nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1)
+        self.bn4   = nn.BatchNorm2d(256)
+        
+        self.fc = nn.Linear(256 * 4 * 4, embedding_dim)
+
+    def forward(self, x):
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = F.relu(self.bn4(self.conv4(x)))
+        x = x.view(x.size(0), -1)
+        embeddings = F.normalize(self.fc(x), p=2, dim=1)
+        return embeddings`
+    },
+    techStack: ['PyTorch 2.x', 'Custom 4-Layer ResNet', 'Triplet Loss Model', '3-Level Pyramid NCC', 'Semiconductor Metrology', 'Python'],
+    githubUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1',
+    metrics: [
+      { label: 'Localization Accuracy', value: '96.7%' },
+      { label: 'Inference Latency', value: '44 ms (CPU)' },
+      { label: 'Model Footprint', value: '1.38 MB' },
+      { label: 'Noise Resilience', value: '+5.4% vs OpenCV' }
+    ]
+  };
+
+  const projectList = (projects && projects.length >= 2) ? projects : [defaultVoltXProject, defaultDriftSenseProject];
 
   const filteredProjects = selectedCategory === 'ALL'
     ? projectList

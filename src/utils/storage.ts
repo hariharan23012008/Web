@@ -81,9 +81,9 @@ void loop() {
   {
     id: 'proj-driftsense',
     title: 'DriftSense: Hybrid Siamese SEM Localization for DRAM & FinFETs',
-    subtitle: 'I4C Competition Winner // 4-Layer ResNet Triplet Loss Model',
+    subtitle: 'Applied Materials Semiconductor Hackathon 2026 // Custom 4-Layer ResNet Triplet Loss Model',
     category: 'VLSI',
-    description: 'A hybrid edge-AI computer vision pipeline combining 3-Level Image Pyramid Normalized Cross-Correlation with a custom 4-layer ResNet Siamese network for sub-pixel semiconductor defect metrology.',
+    description: 'A hybrid edge-AI computer vision pipeline combining 3-Level Image Pyramid Normalized Cross-Correlation (NCC) with a custom 4-layer ResNet Siamese network for sub-pixel semiconductor defect metrology.',
     longDescription: `### The Problem Statement:
 In modern semiconductor foundries, locating a specific microscopic reference patch (e.g., a single FinFET or DRAM memory cell) within a massive, highly-degraded Scanning Electron Microscope (SEM) search image is an immense challenge:
 * **Extreme Noise:** Catastrophic Poisson shot noise, Gaussian read noise, focal blur, multiplicative speckle, and stage vibration jitter.
@@ -98,13 +98,12 @@ We engineered a **Hybrid Fusion Pipeline** running classical Normalized Cross-Co
 * **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
 * **1.38 MB Model Footprint** allowing direct integration onto real-time edge semiconductor metrology tools.
 * **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.`,
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-    schematicImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    pcbLayoutImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
+    image: '/driftsense.jpg',
     bom: [
-      { ref: 'GPU1', name: 'NVIDIA Edge Tensor Cores / CPU x86', package: 'Industrial', footprint: 'Embedded Box', qty: 1, description: '100% CPU edge execution capability (~44ms)' },
-      { ref: 'SEM1', name: 'Industrial SEM Inspection Tool Interface', package: 'Hardware', footprint: 'SEM-Camera', qty: 1, description: '1000x1000 High-resolution nanoscale electron beam imager' },
-      { ref: 'MEM1', name: 'Low-Latency DRAM Frame Buffer', package: 'LPDDR4', footprint: 'BGA', qty: 1, description: 'Fast buffer for 3-Level Image Pyramid downsampling' }
+      { ref: 'SEM1', name: 'Scanning Electron Microscope (SEM) Image Stream', package: 'Nanoscale Imager', footprint: '1000x1000 Grayscale', qty: 1, description: '1-Channel grayscale semiconductor wafer surface scan' },
+      { ref: 'AI-ENG1', name: 'Custom 4-Layer ResNet Siamese TLM Backbone', package: 'PyTorch 2.x', footprint: '128-D Embedding Space', qty: 1, description: 'Triplet Loss metric learning with hard periodic negative mining' },
+      { ref: 'PYRAMID1', name: '3-Level Image Pyramid & Multi-Scale NCC Search', package: 'OpenCV / NumPy', footprint: 'Coarse-to-Fine Pipeline', qty: 1, description: 'Fast global screening (Level 0) to local sub-pixel refinement (Level 2)' },
+      { ref: 'CPU1', name: 'Edge Industrial Host Processor', package: 'x86 CPU Execution', footprint: 'Zero GPU Dependency', qty: 1, description: 'Real-time foundry tool execution (~44ms average latency)' }
     ],
     codeSnippet: {
       language: 'python',
@@ -244,9 +243,9 @@ const INITIAL_PROFILE: EngineerProfile = {
 };
 
 const STORAGE_KEYS = {
-  PROJECTS: 'pcb_portfolio_projects_v6',
-  ACHIEVEMENTS: 'pcb_portfolio_achievements_v6',
-  PROFILE: 'pcb_portfolio_profile_v6'
+  PROJECTS: 'pcb_portfolio_projects_v7',
+  ACHIEVEMENTS: 'pcb_portfolio_achievements_v7',
+  PROFILE: 'pcb_portfolio_profile_v7'
 };
 
 export class StorageService {
@@ -255,24 +254,27 @@ export class StorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.PROJECTS);
       if (!data) {
-        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([REAL_PROJECTS[0]]));
-        return [REAL_PROJECTS[0]];
+        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([REAL_PROJECTS[0], REAL_PROJECTS[1]]));
+        return [REAL_PROJECTS[0], REAL_PROJECTS[1]];
       }
       const parsed = JSON.parse(data);
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([REAL_PROJECTS[0]]));
-        return [REAL_PROJECTS[0]];
+      if (!Array.isArray(parsed) || parsed.length < 2) {
+        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([REAL_PROJECTS[0], REAL_PROJECTS[1]]));
+        return [REAL_PROJECTS[0], REAL_PROJECTS[1]];
       }
-      // Ensure VoltX uses official hardware photo
+      // Ensure official local photos are loaded
       const normalized = parsed.map((p: Project) => {
-        if (p.id === 'proj-voltx' && (!p.image || p.image.includes('unsplash'))) {
+        if (p.id === 'proj-voltx') {
           return { ...p, image: '/voltx.png' };
+        }
+        if (p.id === 'proj-driftsense') {
+          return { ...p, image: '/driftsense.jpg', githubUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1' };
         }
         return p;
       });
       return normalized;
     } catch {
-      return [REAL_PROJECTS[0]];
+      return [REAL_PROJECTS[0], REAL_PROJECTS[1]];
     }
   }
 
