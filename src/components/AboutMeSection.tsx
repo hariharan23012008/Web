@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import type { EngineerProfile } from '../types';
 import { sound } from '../utils/audio';
 import { 
-  GraduationCap, Trophy, Cpu, Code2, 
-  MapPin, CheckCircle2, Sparkles, Eye
+  Trophy, Cpu, Code2, 
+  CheckCircle2, Sparkles, Eye
 } from 'lucide-react';
 
 interface AboutMeSectionProps {
@@ -118,22 +118,6 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
                     Chennai Institute of Technology (CIT)
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Quick Badges below photo */}
-            <div className="w-full max-w-xs mt-5 space-y-2 text-xs">
-              <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300">
-                <span className="flex items-center gap-2 text-zinc-400 font-medium">
-                  <GraduationCap className="w-4 h-4 text-white" /> Year & Branch:
-                </span>
-                <span className="font-semibold text-white">2nd Year • ECE</span>
-              </div>
-              <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-zinc-900/90 border border-zinc-700/80 text-zinc-300">
-                <span className="flex items-center gap-2 text-zinc-400 font-medium">
-                  <MapPin className="w-4 h-4 text-white" /> Location:
-                </span>
-                <span className="font-semibold text-white">Chennai, India</span>
               </div>
             </div>
           </div>
