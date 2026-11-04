@@ -22,32 +22,31 @@ export const App: React.FC = () => {
     setProfile(StorageService.getProfile());
   }, []);
 
-  // Enter Portfolio interface after cinematic 3D dive
-  const handleEnterPortfolio = () => {
-    setView('dashboard');
-    setIsInspecting(false);
+  const scrollToPortfolio = () => {
+    const el = document.getElementById('portfolio-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
-  // Switch back to 3D PCB inspect view
-  const handleOpen3DPCB = () => {
-    setIsInspecting(true);
-    setView('pcb');
-  };
-
-  const handleCloseInspect = () => {
-    setView('dashboard');
-    setIsInspecting(false);
+  const scrollToPCB = () => {
+    const el = document.getElementById('pcb-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#080B10] text-[#C0C6CE] overflow-x-hidden">
-      {view === 'pcb' ? (
+    <div className="w-full min-h-screen bg-[#121316] text-[#e4e4e7] overflow-x-hidden font-sans">
+      {/* 1. 3D PCB Motherboard Hero Canvas */}
+      <div id="pcb-section" className="relative w-full h-screen">
         <PCB3DCanvas
-          onEnterPortfolio={handleEnterPortfolio}
-          isInspecting={isInspecting}
-          onCloseInspect={handleCloseInspect}
+          onEnterPortfolio={scrollToPortfolio}
         />
-      ) : (
+      </div>
+
+      {/* 2. Main Workstation (About Me & Featured Projects) */}
+      <div id="portfolio-section" className="relative w-full">
         <Dashboard
           projects={projects}
           setProjects={setProjects}
@@ -55,9 +54,9 @@ export const App: React.FC = () => {
           setAchievements={setAchievements}
           profile={profile}
           setProfile={setProfile}
-          onOpen3DPCB={handleOpen3DPCB}
+          onOpen3DPCB={scrollToPCB}
         />
-      )}
+      </div>
     </div>
   );
 };
