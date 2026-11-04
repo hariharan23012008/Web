@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #121316;
+    color: #e4e4e7;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar in White and Gray */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #121316;
+    border-left: 1px solid #27272a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #71717a;
+  }
+}
+
+/* PCB Grid Backgrounds */
+.pcb-grid {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(0, 255, 156, 0.15) 1px, transparent 0),
+    linear-gradient(to right, rgba(11, 77, 56, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 77, 56, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 24px 24px;
+}
+
+.pcb-blueprint-grid {
+  background-image: 
+    linear-gradient(to right, rgba(0, 191, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 191, 255, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.pcb-subtle-traces {
+  background-image: radial-gradient(rgba(0, 255, 156, 0.1) 1px, transparent 0);
+  background-size: 16px 16px;
+}
+
+/* CRT Scanline effect */
+.crt-overlay::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Electronic Glows */
+.glow-green {
+  box-shadow: 0 0 15px rgba(0, 255, 156, 0.45);
+}
+.glow-blue {
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.45);
+}
+.glow-copper {
+  box-shadow: 0 0 15px rgba(229, 142, 38, 0.45);
+}
+.text-glow-green {
+  text-shadow: 0 0 8px rgba(0, 255, 156, 0.7);
+}
+.text-glow-blue {
+  text-shadow: 0 0 8px rgba(0, 191, 255, 0.7);
+}
+
+/* Pulsing Circuit Track Animation */
+@keyframes signalTravel {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-signal {
+  stroke-dasharray: 20 200;
+  animation: signalTravel 4s linear infinite;
+}
+
+.animate-signal-fast {
+  stroke-dasharray: 10 100;
+  animation: signalTravel 2s linear infinite;
+}
+
+/* IC Chip Package styling */
+.ic-chip {
+  position: relative;
+  background: linear-gradient(145deg, #181c24, #0d1016);
+  border: 1px solid #2d3748;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.ic-chip::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 20px;
+  width: 12px;
+  height: 6px;
+  background: #080B10;
+  border-radius: 0 0 6px 6px;
+  border-bottom: 1px solid #4a5568;
+}
+
+/* Copper trace styling */
+.copper-trace {
+  stroke: #c27d2c;
+  stroke-width: 2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 2px rgba(229, 142, 38, 0.5));
+}
+
+.font-tech {
+  font-family: 'Share Tech Mono', monospace;
+}
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+.font-rajdhani {
+  font-family: 'Rajdhani', sans-serif;
+}
