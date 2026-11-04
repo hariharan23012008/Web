@@ -49,7 +49,7 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
               
               <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-2xl overflow-hidden border-2 border-zinc-400/80 bg-zinc-900 shadow-xl">
                 <img
-                  src="/hariharan.jpg"
+                  src="./hariharan.jpg"
                   alt="Hariharan K - Electronics Engineer"
                   className="w-full h-full object-cover object-top filter brightness-100 contrast-105 group-hover:scale-105 transition-transform duration-500"
                 />

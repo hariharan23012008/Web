@@ -34,7 +34,7 @@ VoltX allows users to set a custom target battery percentage (e.g., 80%) through
 
 ### Key Architectural Innovation: DependencyGuard
 Features a proprietary DependencyGuard failure-management system that tracks prerequisites, blockers, and recovery protocols.`,
-    image: '/voltx.png',
+    image: './voltx.png',
     bom: [
       { ref: 'U1', name: 'ESP32-WROOM-32 Dual-Core MCU', package: 'SMD Module', footprint: 'ESP32-Module', qty: 1, description: '240MHz Wi-Fi & BLE SoC executing relay control firmware' },
       { ref: 'K1', name: 'Songle 5V 10A SPDT Relay Module', package: 'Through-Hole', footprint: 'Relay-SPDT', qty: 1, description: 'Optocoupler-isolated AC/DC charging power cutoff' },
@@ -100,7 +100,7 @@ By combining the raw speed of classical coarse search with the deep semantic und
 * **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
 * **1.38 MB Model Footprint** allowing direct integration onto real-time edge semiconductor metrology tools.
 * **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.`,
-    image: '/driftsense.jpg',
+    image: './driftsense.jpg',
     bom: [
       { ref: 'SEM1', name: 'Scanning Electron Microscope (SEM) Image Stream', package: 'Nanoscale Imager', footprint: '1000x1000 Grayscale', qty: 1, description: '1-Channel grayscale semiconductor wafer surface scan' },
       { ref: 'AI-ENG1', name: 'Custom 4-Layer ResNet Siamese TLM Backbone', package: 'PyTorch 2.x', footprint: '128-D Embedding Space', qty: 1, description: 'Triplet Loss metric learning with hard periodic negative mining' },
@@ -155,11 +155,8 @@ class Custom4LayerResNet(nn.Module):
     ]
   };
 
-  const projectList = (projects && projects.length >= 2) ? projects : [defaultVoltXProject, defaultDriftSenseProject];
-
-  const filteredProjects = selectedCategory === 'ALL'
-    ? projectList
-    : projectList.filter(p => p.category.toLowerCase() === selectedCategory.toLowerCase());
+  const projectList: Project[] = [defaultVoltXProject, defaultDriftSenseProject];
+  const filteredProjects = projectList;
 
   const handleOpenProject = (p: Project) => {
     sound.playRelayClick();
@@ -217,7 +214,7 @@ class Custom4LayerResNet(nn.Module):
               {/* Project Image Preview (TOUCH PICTURE TO VIEW DETAILS) */}
               <div className="relative h-48 rounded-xl overflow-hidden mb-4 border border-zinc-700/80 bg-zinc-900 group-hover:border-zinc-400 transition-colors">
                 <img
-                  src={project.image}
+                  src={project.image.startsWith('http') ? project.image : `./${project.image.replace(/^\.?\/+/, '')}`}
                   alt={project.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -388,7 +385,7 @@ class Custom4LayerResNet(nn.Module):
                   {/* Hero Project Image */}
                   <div className="relative h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-950">
                     <img
-                      src={activeModalProject.image}
+                      src={activeModalProject.image.startsWith('http') ? activeModalProject.image : `./${activeModalProject.image.replace(/^\.?\/+/, '')}`}
                       alt={activeModalProject.title}
                       className="w-full h-full object-cover"
                     />

@@ -15,7 +15,7 @@ VoltX allows users to set a custom target battery percentage (e.g., 80%) through
 
 ### Key Architectural Innovation: DependencyGuard
 VoltX features a proprietary **DependencyGuard** failure-management system that tracks prerequisites, blockers, paused operations, downstream impacts, and recovery protocols. If Wi-Fi drops, backend APIs fail, or the ESP32 disconnects, DependencyGuard immediately detects the root cause, applies safe fallback actions, and records the telemetry incident.`,
-    image: '/voltx.png',
+    image: './voltx.png',
     bom: [
       { ref: 'U1', name: 'ESP32-WROOM-32 Dual-Core MCU', package: 'SMD Module', footprint: 'ESP32-Module', qty: 1, description: '240MHz Wi-Fi & BLE SoC executing relay control firmware' },
       { ref: 'K1', name: 'Songle 5V 10A SPDT Relay Module', package: 'Through-Hole', footprint: 'Relay-SPDT', qty: 1, description: 'Optocoupler-isolated AC/DC charging power cutoff' },
@@ -98,7 +98,7 @@ We engineered a **Hybrid Fusion Pipeline** running classical Normalized Cross-Co
 * **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
 * **1.38 MB Model Footprint** allowing direct integration onto real-time edge semiconductor metrology tools.
 * **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.`,
-    image: '/driftsense.jpg',
+    image: './driftsense.jpg',
     bom: [
       { ref: 'SEM1', name: 'Scanning Electron Microscope (SEM) Image Stream', package: 'Nanoscale Imager', footprint: '1000x1000 Grayscale', qty: 1, description: '1-Channel grayscale semiconductor wafer surface scan' },
       { ref: 'AI-ENG1', name: 'Custom 4-Layer ResNet Siamese TLM Backbone', package: 'PyTorch 2.x', footprint: '128-D Embedding Space', qty: 1, description: 'Triplet Loss metric learning with hard periodic negative mining' },
@@ -265,10 +265,10 @@ export class StorageService {
       // Ensure official local photos are loaded
       const normalized = parsed.map((p: Project) => {
         if (p.id === 'proj-voltx') {
-          return { ...p, image: '/voltx.png' };
+          return { ...p, image: './voltx.png' };
         }
         if (p.id === 'proj-driftsense') {
-          return { ...p, image: '/driftsense.jpg', githubUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1' };
+          return { ...p, image: './driftsense.jpg', githubUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1' };
         }
         return p;
       });
