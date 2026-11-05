@@ -1034,18 +1034,6 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
         </div>
       </div>
 
-      {/* Zoom to Board & Enter Dashboard Button */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-auto flex flex-col items-center gap-2">
-        <button
-          onClick={triggerEntryTransition}
-          className="group px-7 py-3 rounded-full bg-white text-zinc-950 hover:bg-zinc-200 border border-zinc-300 font-semibold text-sm tracking-wide transition-all duration-300 shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 cursor-pointer font-sans"
-        >
-          <Sparkles className="w-4 h-4 text-zinc-950 animate-pulse" />
-          <span>Click Board to Enter: View VoltX & DriftSense Projects</span>
-          <span className="text-zinc-950 group-hover:translate-x-1 transition-transform">→</span>
-        </button>
-      </div>
-
     </div>
   );
 };
