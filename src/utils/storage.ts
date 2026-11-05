@@ -221,11 +221,11 @@ const INITIAL_PROFILE: EngineerProfile = {
   about: 'I am Hariharan, a passionate and innovative Electronics Engineer with a strong interest in Embedded Systems, VLSI Design, Robotics, IoT, and Hardware Development. I enjoy designing and developing real-world engineering solutions through hands-on projects, including smart charging controllers, AI-powered retail intelligence systems, industrial safety automation, ESP32-based robotics, and custom PCB designs. I have experience working with microcontrollers, sensors, embedded programming, hardware integration, and system development. Apart from my technical interests, I enjoy playing badminton, drawing, creating art and craft projects, and participating in various extracurricular activities.',
   education: [
     {
-      degree: 'B.E. in Electronics and Communication Engineering',
-      institution: 'Engineering University',
+      degree: 'B.E. in Electronics Engineering',
+      institution: 'Chennai Institute of Technology (CIT)',
       duration: '2022 - 2026',
       gpa: 'First Class with Distinction',
-      details: 'Specialization in Embedded IoT Systems, VLSI Architectures, Microcontrollers, Computer Vision Metrology, and Hardware-Software Co-Design.'
+      details: 'Department of Electronics and Electrical Engineering // Specialization in Embedded IoT Systems, VLSI Architectures, Microcontrollers, and Hardware-Software Co-Design.'
     }
   ],
   contact: {
@@ -272,7 +272,7 @@ const INITIAL_PROFILE: EngineerProfile = {
 const STORAGE_KEYS = {
   PROJECTS: 'pcb_portfolio_projects_v8',
   ACHIEVEMENTS: 'pcb_portfolio_achievements_v7',
-  PROFILE: 'pcb_portfolio_profile_v7'
+  PROFILE: 'pcb_portfolio_profile_v8'
 };
 
 export class StorageService {

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { EngineerProfile } from '../types';
 import { sound } from '../utils/audio';
-import { Sparkles, Eye } from 'lucide-react';
+import { Sparkles, Eye, GraduationCap } from 'lucide-react';
 
 interface AboutMeSectionProps {
   profile?: EngineerProfile;
@@ -57,7 +57,7 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
             </div>
           </div>
 
-          {/* Right Column: Exact Biography & Technical Breakdown */}
+          {/* Right Column: Biography & Curriculum Vitae */}
           <div className="lg:col-span-8 space-y-6">
             
             {/* Biography Statement Box */}
@@ -78,6 +78,37 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
               <p className="text-base text-zinc-300 leading-relaxed mt-4 font-normal">
                 Apart from my technical interests, I enjoy <strong className="text-white font-medium">playing badminton</strong>, <strong className="text-white font-medium">drawing</strong>, <strong className="text-white font-medium">creating art and craft projects</strong>, and participating in various extracurricular activities. I love exploring my creativity, learning new skills, and maintaining a balance between technical development and personal interests.
               </p>
+            </div>
+
+            {/* Curriculum Vitae Box */}
+            <div className="p-6 sm:p-7 rounded-2xl bg-zinc-900/90 border border-zinc-700/80 shadow-lg relative">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
+                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-400 tracking-wider uppercase">
+                  <GraduationCap className="w-4 h-4 text-white" />
+                  Curriculum Vitae
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-white border border-zinc-700">
+                  Education & Qualifications
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                <div className="bg-zinc-950/60 p-4 rounded-xl border border-zinc-800/80">
+                  <h3 className="text-lg font-bold text-white tracking-wide">
+                    B.E. in Electronics Engineering
+                  </h3>
+                  <p className="text-sm font-semibold text-zinc-200 mt-1">
+                    Department of Electronics and Electrical Engineering
+                  </p>
+                  <p className="text-xs text-zinc-400 mt-1 font-medium">
+                    Chennai Institute of Technology (CIT)
+                  </p>
+                </div>
+
+                <div className="pt-2 text-xs text-zinc-400 leading-relaxed">
+                  Specializing in Embedded IoT Systems, VLSI Architectures, Microcontrollers, Computer Vision Metrology, and Hardware-Software Co-Design.
+                </div>
+              </div>
             </div>
 
           </div>
