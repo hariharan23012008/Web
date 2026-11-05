@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { sound } from '../utils/audio';
-import { Cpu, Eye, RotateCw, Volume2, VolumeX, Sparkles, Layers } from 'lucide-react';
+import { Cpu, Eye, RotateCw, Volume2, VolumeX, Sparkles, Layers, Zap } from 'lucide-react';
 
 interface PCB3DCanvasProps {
   onEnterPortfolio: () => void;
@@ -25,7 +25,8 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     scene?: THREE.Scene;
     camera?: THREE.PerspectiveCamera;
     pcbBoard?: THREE.Group;
-    ledLights: { light: THREE.PointLight; mesh: THREE.Mesh; phase: number; speed: number }[];
+    ledLights: { light: THREE.PointLight; mesh: THREE.Mesh; mat: THREE.MeshStandardMaterial; phase: number; speed: number; pattern: 'steady' | 'blink' | 'burst' | 'heartbeat' }[];
+    activeSparks: { mesh: THREE.Mesh; path: THREE.Vector3[]; progress: number; speed: number }[];
     materials: THREE.Material[];
     reqId?: number;
     targetCamPos: THREE.Vector3;
@@ -36,6 +37,7 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     targetMouse: THREE.Vector2;
   }>({
     ledLights: [],
+    activeSparks: [],
     materials: [],
     targetCamPos: new THREE.Vector3(0, 9.5, 12.0),
     targetLookAt: new THREE.Vector3(0, 0, 0),
@@ -51,8 +53,8 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
 
     // --- 1. Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x06090e);
-    scene.fog = new THREE.FogExp2(0x06090e, 0.02);
+    scene.background = new THREE.Color(0x05070a);
+    scene.fog = new THREE.FogExp2(0x05070a, 0.018);
 
     const width = container.clientWidth;
     const height = container.clientHeight;
@@ -77,88 +79,88 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     stateRef.current.scene = scene;
     stateRef.current.camera = camera;
 
-    // --- 2. Studio Lighting for Metallic Traces & Solder Pads ---
-    const ambientLight = new THREE.AmbientLight(0xe2e8f0, 1.4);
+    // --- 2. Studio Lighting for High-Contrast Black PCB & Metallic Traces ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    // Key directional light for crisp specular glints off solder joints
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
-    keyLight.position.set(8, 14, 8);
+    // Key directional light for crisp reflections off solder joints, pins and the STM32 package
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    keyLight.position.set(8, 15, 9);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
-    keyLight.shadow.camera.near = 0.5;
-    keyLight.shadow.camera.far = 25;
     keyLight.shadow.bias = -0.0003;
     scene.add(keyLight);
 
-    // Warm copper/gold rim light
-    const rimLight = new THREE.DirectionalLight(0x34d399, 1.3);
-    rimLight.position.set(-8, 9, -6);
-    scene.add(rimLight);
+    // Electric Cyan & Emerald Rim Lighting for futuristic circuit aesthetics
+    const cyanRim = new THREE.DirectionalLight(0x00e5ff, 1.4);
+    cyanRim.position.set(-9, 10, -7);
+    scene.add(cyanRim);
 
-    // Soft under-glow
-    const underGlow = new THREE.PointLight(0x059669, 1.2, 16);
-    underGlow.position.set(0, -3.5, 0);
+    const emeraldRim = new THREE.DirectionalLight(0x10b981, 1.2);
+    emeraldRim.position.set(9, -4, -6);
+    scene.add(emeraldRim);
+
+    // Dynamic Board Under-Glow
+    const underGlow = new THREE.PointLight(0x00ffff, 1.4, 20);
+    underGlow.position.set(0, -3.2, 0);
     scene.add(underGlow);
 
-    // --- 3. Construct Main PCB Board using the Real Board Photo ---
+    // --- 3. Construct Main STM32 Board using the Clean User Picture ---
     const pcbGroup = new THREE.Group();
     scene.add(pcbGroup);
     stateRef.current.pcbBoard = pcbGroup;
 
-    // Real PCB Dimensions based on aspect ratio of the user photo (412 / 321 = 1.283)
-    const boardWidth = 14.2;
-    const boardLength = 11.0;
-    const boardThickness = 0.35;
+    // Aspect ratio matches 1024x768 (1.333)
+    const boardWidth = 14.0;
+    const boardLength = 10.5;
+    const boardThickness = 0.38;
     const boardGeo = new THREE.BoxGeometry(boardWidth, boardThickness, boardLength);
 
-    // Materials for the 6 faces: [right, left, top, bottom, front, back]
+    // Matte Black FR4 core edge material with subtle metallic sheen
     const edgeMat = new THREE.MeshStandardMaterial({
-      color: 0x0f4229, // dark FR4 core resin
+      color: 0x121418,
+      roughness: 0.45,
+      metalness: 0.3
+    });
+
+    const bottomMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0c10,
       roughness: 0.5,
       metalness: 0.2
     });
 
-    const bottomMat = new THREE.MeshStandardMaterial({
-      color: 0x064e3b, // dark emerald green solder mask
-      roughness: 0.35,
-      metalness: 0.15
-    });
-
     const topMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.28,
-      metalness: 0.22
+      roughness: 0.22,
+      metalness: 0.35,
+      transparent: true
     });
 
     stateRef.current.materials.push(edgeMat, bottomMat, topMat);
 
-    // Load High-Resolution Real PCB Photo Texture
+    // Load STM32 Board Texture with White-Background Transparency Keying
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('./real-pcb-texture.jpg', (texture) => {
-      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      texture.colorSpace = THREE.SRGBColorSpace;
-      topMat.map = texture;
-
-      // Generate dynamic Bump and Specular/Metalness Maps directly from the image data
+    textureLoader.load('./stm32-board.jpg', (rawTexture) => {
       try {
-        const img = texture.image;
+        const img = rawTexture.image;
         const canvas = document.createElement('canvas');
-        canvas.width = img.width || 512;
-        canvas.height = img.height || 512;
+        canvas.width = img.width || 1024;
+        canvas.height = img.height || 768;
         const ctx = canvas.getContext('2d');
         if (ctx) {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const d = imgData.data;
 
+          // Bump map canvas
           const bumpCanvas = document.createElement('canvas');
           bumpCanvas.width = canvas.width;
           bumpCanvas.height = canvas.height;
           const bCtx = bumpCanvas.getContext('2d')!;
           const bData = bCtx.createImageData(canvas.width, canvas.height);
 
+          // Metalness canvas
           const metalCanvas = document.createElement('canvas');
           metalCanvas.width = canvas.width;
           metalCanvas.height = canvas.height;
@@ -171,40 +173,53 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
             const b = d[i + 2];
             const lum = 0.299 * r + 0.587 * g + 0.114 * b;
 
-            // Solder joints and shiny pins: high brightness, low green dominance
-            const isSolder = lum > 140 && Math.abs(r - b) < 40;
-            const isChip = lum < 65;
+            // Remove outer white background from image corners with soft edge feathering
+            if (r > 242 && g > 242 && b > 242) {
+              d[i + 3] = 0; // Pure transparent background
+            } else if (r > 220 && g > 220 && b > 220) {
+              const alpha = Math.max(0, Math.min(255, (255 - lum) * 8));
+              d[i + 3] = alpha;
+            }
 
-            // Bump map elevation: solder pads and components raise up
-            const elev = isChip ? 180 : (isSolder ? 230 : lum * 0.45);
+            // Height Bump Mapping: Pins, crystal, battery holder & IC stand out
+            const isMetal = lum > 140 && Math.abs(r - b) < 40;
+            const isChip = lum < 60;
+            const elev = isChip ? 190 : (isMetal ? 245 : lum * 0.45);
             bData.data[i] = elev;
             bData.data[i + 1] = elev;
             bData.data[i + 2] = elev;
-            bData.data[i + 3] = 255;
+            bData.data[i + 3] = d[i + 3];
 
-            // Metalness map: solder pads, cans, and leads shine with metallic reflections
-            const metalVal = isSolder ? 235 : 25;
+            // Metalness: Solder joints, silver crystal can and gold pins reflect intensely
+            const metalVal = isMetal ? 245 : 30;
             mData.data[i] = metalVal;
             mData.data[i + 1] = metalVal;
             mData.data[i + 2] = metalVal;
-            mData.data[i + 3] = 255;
+            mData.data[i + 3] = d[i + 3];
           }
 
+          ctx.putImageData(imgData, 0, 0);
           bCtx.putImageData(bData, 0, 0);
           mCtx.putImageData(mData, 0, 0);
+
+          const cleanTexture = new THREE.CanvasTexture(canvas);
+          cleanTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          cleanTexture.colorSpace = THREE.SRGBColorSpace;
+          topMat.map = cleanTexture;
 
           const bumpTex = new THREE.CanvasTexture(bumpCanvas);
           const metalTex = new THREE.CanvasTexture(metalCanvas);
           topMat.bumpMap = bumpTex;
-          topMat.bumpScale = 0.09;
+          topMat.bumpScale = 0.12;
           topMat.metalnessMap = metalTex;
           topMat.needsUpdate = true;
         }
       } catch (err) {
-        console.warn('Canvas texture analysis fallback', err);
+        console.warn('Canvas texture processing fallback', err);
+        rawTexture.colorSpace = THREE.SRGBColorSpace;
+        topMat.map = rawTexture;
+        topMat.needsUpdate = true;
       }
-
-      topMat.needsUpdate = true;
     });
 
     const boxMaterials = [edgeMat, edgeMat, topMat, bottomMat, edgeMat, edgeMat];
@@ -213,21 +228,19 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     boardMesh.castShadow = true;
     pcbGroup.add(boardMesh);
 
-    // --- 4. Authentic Corner Mounting Holes with Annular Gold Rings ---
-    const ringGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.37, 24);
-    const ringMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.15 });
-    const holeGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.39, 24);
-    const holeMat = new THREE.MeshBasicMaterial({ color: 0x06090e });
+    // Corner Mounting Rings in Gold & Silver
+    const ringGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.40, 24);
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.1 });
+    const holeGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.42, 24);
+    const holeMat = new THREE.MeshBasicMaterial({ color: 0x05070a });
     stateRef.current.materials.push(ringMat, holeMat);
 
-    const cornerOffsets = [
-      [-boardWidth / 2 + 0.8, -boardLength / 2 + 0.8],
-      [boardWidth / 2 - 0.8, -boardLength / 2 + 0.8],
-      [-boardWidth / 2 + 0.8, boardLength / 2 - 0.8],
-      [boardWidth / 2 - 0.8, boardLength / 2 - 0.8]
-    ];
-
-    cornerOffsets.forEach(([cx, cz]) => {
+    [
+      [-boardWidth / 2 + 0.75, -boardLength / 2 + 0.75],
+      [boardWidth / 2 - 0.75, -boardLength / 2 + 0.75],
+      [-boardWidth / 2 + 0.75, boardLength / 2 - 0.75],
+      [boardWidth / 2 - 0.75, boardLength / 2 - 0.75]
+    ].forEach(([cx, cz]) => {
       const ring = new THREE.Mesh(ringGeo, ringMat);
       ring.position.set(cx, 0, cz);
       pcbGroup.add(ring);
@@ -237,36 +250,153 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
       pcbGroup.add(hole);
     });
 
-    // --- 5. Interactive Micro Diagnostic LEDs (Subtle, Real SMD Scale) ---
-    const ledPoints = [
-      { x: -1.2, z: 0.5, color: 0x00ff9c, speed: 0 },    // Power OK (Emerald Green)
-      { x: 3.2, z: -0.2, color: 0x38bdf8, speed: 7 },    // Clock / SPI Activity (Cyan)
-      { x: 0.4, z: 2.1, color: 0xf59e0b, speed: 5 },     // Data Sync (Amber)
-      { x: 2.8, z: 3.2, color: 0xef4444, speed: 2 }      // Heartbeat pulse (Red)
+    // ========================================================
+    // 4. "SPARK LINES ARE RUN IN THE BOARD" (Animated Energy Traces)
+    // ========================================================
+    const sparkLinesGroup = new THREE.Group();
+    pcbGroup.add(sparkLinesGroup);
+
+    // Multi-segment circuit routes running across the STM32 board
+    const sparkPaths: THREE.Vector3[][] = [
+      // 1. Shrouded JTAG Header to Central STM32 MCU
+      [
+        new THREE.Vector3(2.5, 0.23, -3.6),
+        new THREE.Vector3(1.6, 0.23, -2.4),
+        new THREE.Vector3(0.8, 0.23, -1.2),
+        new THREE.Vector3(0.0, 0.23, 0.0)
+      ],
+      // 2. Crystal Oscillators to STM32 Clock Inputs
+      [
+        new THREE.Vector3(-0.6, 0.23, -1.8),
+        new THREE.Vector3(-0.4, 0.23, -1.0),
+        new THREE.Vector3(0.0, 0.23, -0.3)
+      ],
+      // 3. STM32 MCU to Flash Memory Chip
+      [
+        new THREE.Vector3(-0.3, 0.23, 0.1),
+        new THREE.Vector3(-1.4, 0.23, 0.1),
+        new THREE.Vector3(-2.6, 0.23, 0.2)
+      ],
+      // 4. STM32 MCU to Right Dual-Row Pin Header Bus
+      [
+        new THREE.Vector3(0.4, 0.23, 0.2),
+        new THREE.Vector3(2.0, 0.23, 0.8),
+        new THREE.Vector3(3.6, 0.23, 1.4),
+        new THREE.Vector3(4.8, 0.23, 1.8)
+      ],
+      // 5. STM32 MCU to Left Dual-Row Pin Header Bus
+      [
+        new THREE.Vector3(-0.3, 0.23, -0.2),
+        new THREE.Vector3(-2.2, 0.23, -1.0),
+        new THREE.Vector3(-3.8, 0.23, -1.8),
+        new THREE.Vector3(-4.8, 0.23, -2.0)
+      ],
+      // 6. Coin Cell Battery (RTC Backup) to STM32 Core
+      [
+        new THREE.Vector3(-1.1, 0.23, 2.3),
+        new THREE.Vector3(-0.6, 0.23, 1.4),
+        new THREE.Vector3(-0.1, 0.23, 0.4)
+      ],
+      // 7. Micro SD / USB Header to Bus Hub
+      [
+        new THREE.Vector3(4.6, 0.23, -2.4),
+        new THREE.Vector3(3.2, 0.23, -1.8),
+        new THREE.Vector3(1.5, 0.23, -0.8),
+        new THREE.Vector3(0.2, 0.23, 0.0)
+      ]
     ];
 
-    const ledMeshGeo = new THREE.BoxGeometry(0.18, 0.08, 0.14);
+    // Build glowing electric circuit line tracks on the board
+    sparkPaths.forEach((pathPoints, pIdx) => {
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(pathPoints);
+      const isCyan = pIdx % 2 === 0;
+      const trackMat = new THREE.LineBasicMaterial({
+        color: isCyan ? 0x00ffff : 0x10b981,
+        transparent: true,
+        opacity: 0.55
+      });
+      stateRef.current.materials.push(trackMat);
+      const lineMesh = new THREE.Line(lineGeo, trackMat);
+      sparkLinesGroup.add(lineMesh);
+    });
 
-    ledPoints.forEach((pt, idx) => {
-      const lMat = new THREE.MeshBasicMaterial({ color: pt.color });
-      stateRef.current.materials.push(lMat);
-      const lMesh = new THREE.Mesh(ledMeshGeo, lMat);
-      lMesh.position.set(pt.x, boardThickness / 2 + 0.04, pt.z);
-      pcbGroup.add(lMesh);
+    // Active Traveling Energy Sparks with Glowing Light Bulbs
+    const sparkGeo = new THREE.SphereGeometry(0.09, 10, 10);
+    const sparkMatCyan = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+    const sparkMatEmerald = new THREE.MeshBasicMaterial({ color: 0x34d399 });
+    const sparkMatAmber = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+    stateRef.current.materials.push(sparkMatCyan, sparkMatEmerald, sparkMatAmber);
 
-      const pLight = new THREE.PointLight(pt.color, 0.9, 1.8);
-      pLight.position.set(pt.x, boardThickness / 2 + 0.12, pt.z);
+    sparkPaths.forEach((path, i) => {
+      // 3 to 4 sparks per line track
+      const sparksPerLine = 3;
+      for (let s = 0; s < sparksPerLine; s++) {
+        let mat = sparkMatCyan;
+        if (i % 3 === 1) mat = sparkMatEmerald;
+        if (i % 3 === 2) mat = sparkMatAmber;
+
+        const sparkMesh = new THREE.Mesh(sparkGeo, mat);
+        sparkLinesGroup.add(sparkMesh);
+
+        stateRef.current.activeSparks.push({
+          mesh: sparkMesh,
+          path,
+          progress: (s / sparksPerLine) + (i * 0.12),
+          speed: 0.005 + (i * 0.0012)
+        });
+      }
+    });
+
+    // ========================================================
+    // 5. "AND LIGHT ARE BLINK" (Pulsing SMD Diagnostic LEDs)
+    // ========================================================
+    const ledSpecs: {
+      x: number;
+      z: number;
+      color: number;
+      speed: number;
+      pattern: 'steady' | 'blink' | 'burst' | 'heartbeat';
+      name: string;
+    }[] = [
+      { x: -4.2, z: -3.0, color: 0x10b981, speed: 0, pattern: 'steady', name: 'PWR (3V3 Ready)' },        // Green Power LED
+      { x: -3.0, z: -2.2, color: 0x00e5ff, speed: 7, pattern: 'burst', name: 'TX Activity (SPI)' },        // Cyan High-Speed Packet Burst
+      { x: -2.5, z: -2.2, color: 0xf59e0b, speed: 6, pattern: 'burst', name: 'RX Activity (UART)' },       // Amber Data Burst
+      { x: 1.8, z: -2.8, color: 0x3b82f6, speed: 2, pattern: 'heartbeat', name: 'CPU Kernel Heartbeat' }, // Blue Heartbeat
+      { x: -1.6, z: 3.4, color: 0xef4444, speed: 4, pattern: 'blink', name: 'User LED / D2' }             // Red User Alert Blink
+    ];
+
+    const ledPackageGeo = new THREE.BoxGeometry(0.24, 0.12, 0.16);
+
+    ledSpecs.forEach((spec, idx) => {
+      const ledMat = new THREE.MeshStandardMaterial({
+        color: spec.color,
+        emissive: new THREE.Color(spec.color),
+        emissiveIntensity: 1.6,
+        roughness: 0.2,
+        metalness: 0.1
+      });
+      stateRef.current.materials.push(ledMat);
+
+      const ledMesh = new THREE.Mesh(ledPackageGeo, ledMat);
+      ledMesh.position.set(spec.x, boardThickness / 2 + 0.06, spec.z);
+      pcbGroup.add(ledMesh);
+
+      // Dedicated PointLight casting real colored light onto the surrounding PCB traces
+      const pLight = new THREE.PointLight(spec.color, 1.2, 2.2);
+      pLight.position.set(spec.x, boardThickness / 2 + 0.16, spec.z);
       pcbGroup.add(pLight);
 
       stateRef.current.ledLights.push({
         light: pLight,
-        mesh: lMesh,
-        phase: idx * 1.5,
-        speed: pt.speed
+        mesh: ledMesh,
+        mat: ledMat,
+        phase: idx * 1.6,
+        speed: spec.speed,
+        pattern: spec.pattern
       });
     });
 
-    // --- Interactive Mouse Handlers ---
+    // --- 6. Interactive Mouse Gyro Handlers ---
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -274,7 +404,7 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
       stateRef.current.targetMouse.set(x, y);
     };
 
-    // Clicking directly on the 3D PCB board zooms inside to Dashboard
+    // Clicking anywhere on the 3D board triggers zoom and dashboard entry
     const handleCanvasClick = () => {
       if (isTransitioning) return;
       triggerEntryTransition();
@@ -293,7 +423,7 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     };
     window.addEventListener('resize', handleResize);
 
-    // --- Animation Loop ---
+    // --- 7. Animation Loop with Live Sparks & Blinking Lights ---
     let clock = new THREE.Clock();
 
     const animate = () => {
@@ -303,11 +433,11 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
       // Mouse Parallax Lerp
       stateRef.current.mouse.lerp(stateRef.current.targetMouse, 0.08);
 
-      // Realistic 3D Gyro Floating Tilt
+      // Gyroscopic Floating Board Motion
       if (!isTransitioning && autoRotate) {
-        pcbGroup.rotation.y = Math.sin(elapsedTime * 0.35) * 0.15 + (stateRef.current.mouse.x * 0.32);
-        pcbGroup.rotation.x = 0.25 + Math.cos(elapsedTime * 0.28) * 0.06 + (-stateRef.current.mouse.y * 0.25);
-        pcbGroup.position.y = Math.sin(elapsedTime * 0.8) * 0.14;
+        pcbGroup.rotation.y = Math.sin(elapsedTime * 0.35) * 0.16 + (stateRef.current.mouse.x * 0.32);
+        pcbGroup.rotation.x = 0.28 + Math.cos(elapsedTime * 0.28) * 0.06 + (-stateRef.current.mouse.y * 0.26);
+        pcbGroup.position.y = Math.sin(elapsedTime * 0.8) * 0.15;
       }
 
       // Smooth Camera Transitions
@@ -316,13 +446,48 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
       camera.position.copy(stateRef.current.currentCamPos);
       camera.lookAt(stateRef.current.currentLookAt);
 
-      // Animate Diagnostic Micro-LEDs
+      // --- ANIMATE BLINKING LIGHTS ("light are blink") ---
       stateRef.current.ledLights.forEach(item => {
-        if (item.speed === 0) {
-          item.light.intensity = 0.8 + Math.sin(elapsedTime * 8) * 0.08;
-        } else {
-          const val = Math.sin(elapsedTime * item.speed + item.phase);
-          item.light.intensity = val > 0.45 ? 1.4 : 0.08;
+        let intensity = 1.0;
+
+        if (item.pattern === 'steady') {
+          // Steady power with subtle analog ripple
+          intensity = 1.0 + Math.sin(elapsedTime * 12) * 0.08;
+        } else if (item.pattern === 'heartbeat') {
+          // Double pulse heartbeat (every 1 sec)
+          const cycle = (elapsedTime * 1.5 + item.phase) % (Math.PI * 2);
+          const pulse1 = Math.max(0, Math.sin(cycle * 3));
+          const pulse2 = Math.max(0, Math.sin((cycle - 0.5) * 3));
+          intensity = (pulse1 > 0.4 || pulse2 > 0.4) ? 2.2 : 0.08;
+        } else if (item.pattern === 'burst') {
+          // High-frequency telemetry packet burst
+          const raw = Math.sin(elapsedTime * item.speed + item.phase);
+          const noise = Math.sin(elapsedTime * 23.5);
+          intensity = (raw > 0.3 && noise > 0) ? 2.4 : 0.06;
+        } else if (item.pattern === 'blink') {
+          // Classic crisp digital flash
+          const pulse = Math.sin(elapsedTime * item.speed + item.phase);
+          intensity = pulse > 0.2 ? 2.0 : 0.05;
+        }
+
+        item.light.intensity = intensity;
+        item.mat.emissiveIntensity = intensity * 1.4;
+      });
+
+      // --- ANIMATE TRAVELING SPARK LINES ("spark line are run in the board") ---
+      stateRef.current.activeSparks.forEach(spark => {
+        spark.progress += spark.speed;
+        if (spark.progress > 1.0) spark.progress = 0;
+
+        const numSegments = spark.path.length - 1;
+        const segmentFloat = spark.progress * numSegments;
+        const segIdx = Math.floor(segmentFloat);
+        const segT = segmentFloat - segIdx;
+
+        if (segIdx < numSegments) {
+          const p1 = spark.path[segIdx];
+          const p2 = spark.path[segIdx + 1];
+          spark.mesh.position.lerpVectors(p1, p2, segT);
         }
       });
 
@@ -345,19 +510,19 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     };
   }, []);
 
-  // Cinematic Deep Zoom into the Real PCB Board & Transition to Dashboard
+  // Cinematic Deep Zoom into the STM32 Board & Transition to Dashboard
   const triggerEntryTransition = () => {
     setIsTransitioning(true);
     sound.playCapacitorCharge();
     sound.playTelemetryBurst();
 
-    // Camera zooms deep down into the center of the board
-    stateRef.current.targetCamPos.set(0, 1.2, 1.5);
-    stateRef.current.targetLookAt.set(0, 0, 0);
+    // Camera zooms straight down into the central STM32 chip
+    stateRef.current.targetCamPos.set(0, 1.1, 1.3);
+    stateRef.current.targetLookAt.set(0, 0, 0.1);
 
     if (stateRef.current.pcbBoard) {
       stateRef.current.pcbBoard.rotation.x = 0.45;
-      stateRef.current.pcbBoard.rotation.y = 0.1;
+      stateRef.current.pcbBoard.rotation.y = 0.08;
     }
 
     setTimeout(() => {
@@ -390,15 +555,8 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     sound.playRelayClick();
   };
 
-  const handleResetCam = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    stateRef.current.targetCamPos.set(0, 9.5, 12.0);
-    stateRef.current.targetLookAt.set(0, 0, 0);
-    sound.playRelayClick();
-  };
-
   return (
-    <div className="relative w-full h-screen overflow-hidden select-none bg-[#06090e]">
+    <div className="relative w-full h-screen overflow-hidden select-none bg-[#05070a]">
       {/* 3D WebGL Canvas */}
       <div ref={mountRef} className="w-full h-full cursor-pointer" />
 
@@ -407,15 +565,19 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
 
       {/* Top Header Badge */}
       <div className="absolute top-5 left-6 right-6 flex items-center justify-between pointer-events-auto">
-        <div className="flex items-center space-x-3 bg-zinc-950/80 backdrop-blur-md border border-zinc-700/80 px-4 py-2 rounded-xl shadow-xl">
-          <Cpu className="w-5 h-5 text-emerald-400 animate-pulse" />
+        <div className="flex items-center space-x-3 bg-zinc-950/85 backdrop-blur-md border border-zinc-700/80 px-4 py-2 rounded-xl shadow-xl">
+          <Cpu className="w-5 h-5 text-cyan-400 animate-pulse" />
           <div>
             <div className="text-sm font-bold text-white tracking-wide flex items-center gap-2">
-              <span>Interactive 3D PCB View</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span>STM32F4xx Development Board</span>
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
             </div>
-            <div className="text-xs text-zinc-400 font-normal">
-              Touch or click anywhere on the board to enter Dashboard
+            <div className="text-xs text-zinc-400 font-normal flex items-center gap-2 mt-0.5">
+              <span className="flex items-center gap-1 text-emerald-400">
+                <Zap className="w-3 h-3" /> Live Sparks Running
+              </span>
+              <span>•</span>
+              <span>Click board to enter Dashboard</span>
             </div>
           </div>
         </div>
@@ -436,10 +598,10 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
             onClick={handleToggleRotate}
             className={`p-2.5 rounded-xl border transition-all shadow-md ${
               autoRotate
-                ? 'bg-zinc-900/80 border-emerald-500/80 text-emerald-400'
+                ? 'bg-zinc-900/80 border-cyan-500/80 text-cyan-400'
                 : 'bg-zinc-900/80 border-zinc-700 text-zinc-400 hover:text-white'
             }`}
-            title="Toggle Gyroscopic 3D Rotation"
+            title="Toggle Gyroscopic 3D Tilt"
           >
             <RotateCw className="w-4 h-4" />
           </button>
@@ -473,9 +635,9 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
 
       {/* Floating Center Touch Hint */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none">
-        <div className="px-5 py-2 rounded-full bg-zinc-950/80 backdrop-blur-md border border-zinc-700/80 text-xs font-semibold text-zinc-300 shadow-2xl flex items-center gap-2 animate-bounce">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Click anywhere on the PCB board to enter</span>
+        <div className="px-5 py-2 rounded-full bg-zinc-950/85 backdrop-blur-md border border-zinc-700/80 text-xs font-semibold text-zinc-300 shadow-2xl flex items-center gap-2 animate-bounce">
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Click anywhere on the STM32 board to enter</span>
         </div>
       </div>
 
