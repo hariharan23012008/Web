@@ -84,22 +84,47 @@ void loop() {
     subtitle: 'Applied Materials Semiconductor Hackathon 2026 // Custom 4-Layer ResNet Triplet Loss Model',
     category: 'VLSI',
     description: 'A hybrid edge-AI computer vision pipeline combining 3-Level Image Pyramid Normalized Cross-Correlation (NCC) with a custom 4-layer ResNet Siamese network for sub-pixel semiconductor defect metrology.',
-    longDescription: `### The Problem Statement:
-In modern semiconductor foundries, locating a specific microscopic reference patch (e.g., a single FinFET or DRAM memory cell) within a massive, highly-degraded Scanning Electron Microscope (SEM) search image is an immense challenge:
-* **Extreme Noise:** SEM imaging physics naturally introduces catastrophic Poisson shot noise, Gaussian read noise, focal blur, multiplicative speckle, contrast drift, and stage vibration jitter.
-* **Periodic Decoys:** Semiconductor chips (especially DRAM arrays) consist of millions of perfectly repeating, identical-looking structures.
-* **Classical Fragility:** Traditional mathematical Computer Vision algorithms (like pure Template Matching) routinely fail because they lack the semantic understanding to differentiate the true target from a noisy periodic decoy.
+    longDescription: `### 🚨 The Problem Statement:
+In modern semiconductor foundries, locating a specific microscopic reference patch (e.g., a single FinFET or DRAM layout cell) within a massive, highly-degraded Scanning Electron Microscope (SEM) search image is an immense challenge:
+• Extreme Noise: SEM imaging physics naturally introduces catastrophic Poisson shot noise, Gaussian read noise, focal blur, multiplicative speckle, contrast drift, and stage vibration jitter.
+• Periodic Decoys: Semiconductor chips (especially DRAM arrays) consist of millions of perfectly repeating, identical-looking structures.
+• Classical Fragility: Traditional mathematical Computer Vision algorithms (like pure Template Matching) routinely fail because they lack the semantic understanding to differentiate the true target from a noisy periodic decoy.
 
-### The Solution:
-We engineered a **Hybrid Fusion Pipeline** that runs classical Normalized Cross-Correlation (NCC) search through a **3-Level Image Pyramid**, disambiguated by a **Siamese Triplet Loss Model (TLM)** built on a lightweight **Custom 4-Layer ResNet** encoder.
+### 💡 Our Solution:
+We engineered a Hybrid Fusion Pipeline that runs classical Normalized Cross-Correlation (NCC) search through a 3-Level Image Pyramid, disambiguated by a Siamese Triplet Loss Model (TLM) built on a lightweight Custom 4-Layer ResNet encoder.
 
 By combining the raw speed of classical coarse search with the deep semantic understanding of a learned heatmap regressor, we created a system capable of shattering classical accuracy baselines while maintaining strict real-time edge-device constraints (~44ms average on CPU, 1.38MB model weights).
 
-### Key Architectural Benchmark Achievements:
-* **96.7% Localization Accuracy** on 60 physical DRAM semiconductor images.
-* **44ms Inference Latency** on 100% CPU execution without requiring expensive foundry GPUs.
-* **1.38 MB Model Footprint** allowing direct integration onto real-time edge semiconductor metrology tools.
-* **+5.4% Accuracy Improvement** over OpenCV baselines under extreme 2.0x noise injection.`,
+### 🏗️ Architecture Deep-Dive:
+1. Preprocessing Pipeline:
+   • Grayscale normalization (uint8)
+   • Histogram equalization
+   • Denoising (Gaussian / Median)
+   • High-pass Edge enhancement
+
+2. Custom 4-Layer ResNet Siamese Encoder:
+   Rather than deploying a massive off-the-shelf architecture, we designed a deliberately bottlenecked 4-Layer ResNet encoder. It mathematically forces the network to ignore transient noise and focus purely on extracting fundamental, invariant geometric structures.
+   • Output: Projects 1-channel grayscale SEM patches into a discriminative 128-Dimensional embedding space.
+
+3. Training & Triplet Loss Setup:
+   • Framework: PyTorch 2.x, OpenCV, NumPy
+   • Optimizer: AdamW (initial LR = 0.001, weight decay = 1e-4) with Cosine Annealing scheduler
+   • Loss Function: Triplet Loss Model (TLM) with hard negative mining (15 periodic-decoy negatives + 15 global random negatives per anchor)
+   • Target Deployment: 100% CPU edge execution on factory inspection hardware (optional CUDA 12.1 acceleration)
+
+4. Three-Level Image Pyramid (Hybrid Inference):
+   • Level 0 (Coarse NCC): A 50×50 template is swept across a 500×500 downsampled search region for fast global screening, producing Top-K candidate peaks.
+   • Level 1 (Siamese Verification & Re-Ranking): Full-resolution (100×100) matching using the Siamese ResNet TLM encoder re-ranks and verifies candidates against periodic decoys.
+   • Level 2 (Fine Localization): Local refinement at 200×200 around the best candidate to lock in final sub-pixel coordinates.
+   • Center Bias Disambiguation: Computes candidate distance from image center to reliably break ties when multiple candidates score similarly.
+   • Post-Processing: 3×3 Non-Maximum Suppression (NMS), coordinate refinement, boundary checking, and confidence thresholding.
+
+### 🔬 Key Benchmark & Robustness Achievements:
+• 96.7% Localization Accuracy across 60 physical DRAM semiconductor images (58 successful hits).
+• 44ms Inference Latency on 100% CPU execution without requiring expensive foundry GPUs.
+• 1.38 MB Model Footprint allowing direct integration onto real-time edge semiconductor metrology tools.
+• +5.4% Accuracy Improvement over classical OpenCV baselines under extreme 2.0x noise injection.
+• Top-K=3 Ablation Optimization: Restricting classical stage output to top_k=3 candidates with min_distance=10 prevents multi-decoy confusion and guarantees maximum discriminative accuracy.`,
     image: './driftsense.jpg',
     bom: [
       { ref: 'SEM1', name: 'Scanning Electron Microscope (SEM) Image Stream', package: 'Nanoscale Imager', footprint: '1000x1000 Grayscale', qty: 1, description: '1-Channel grayscale semiconductor wafer surface scan' },
@@ -147,6 +172,7 @@ class Custom4LayerResNet(nn.Module):
     },
     techStack: ['PyTorch 2.x', 'Custom 4-Layer ResNet', 'Triplet Loss Model', '3-Level Pyramid NCC', 'Semiconductor Metrology', 'Python'],
     githubUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1',
+    demoUrl: 'https://github.com/hariharan23012008/I4C_Drift_sense_D_RAM_submission-1/blob/main/README.md#-the-problem-statement',
     metrics: [
       { label: 'Localization Accuracy', value: '96.7%' },
       { label: 'Inference Latency', value: '44 ms (CPU)' },
@@ -302,6 +328,17 @@ class Custom4LayerResNet(nn.Module):
               </div>
 
               <div className="flex items-center space-x-2">
+                {activeModalProject.demoUrl && (
+                  <a
+                    href={activeModalProject.demoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold shadow transition-all"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Problem Statement</span>
+                  </a>
+                )}
                 {activeModalProject.githubUrl && (
                   <a
                     href={activeModalProject.githubUrl}
