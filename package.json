@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "predev": "node -e \"const fs = require('fs'); if (fs.existsSync('index.dev.html')) fs.copyFileSync('index.dev.html', 'index.html');\"",
+    "build": "node -e \"const fs = require('fs'), { execSync } = require('child_process'); fs.copyFileSync('index.dev.html', 'index.html'); execSync('tsc -b && vite build', { stdio: 'inherit' }); fs.copyFileSync('dist/index.html', 'index.html'); fs.copyFileSync('dist/index.html', '404.html'); fs.copyFileSync('dist/index.html', 'docs/index.html'); fs.cpSync('dist/assets', 'assets', { recursive: true }); fs.cpSync('dist/assets', 'docs/assets', { recursive: true }); console.log('Build and deployment bundles synchronized!');\"",
     "deploy": "npm run build && node -e \"const {execSync} = require('child_process'); execSync('git push origin main && git subtree push --prefix dist origin gh-pages', {stdio: 'inherit'});\"",
     "lint": "oxlint",
     "preview": "vite preview"
