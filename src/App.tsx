@@ -7,7 +7,6 @@ import type { Project, Achievement, EngineerProfile } from './types';
 export const App: React.FC = () => {
   // Navigation View: 'pcb' (Landing 3D Experience) or 'dashboard' (Main Engineering Lab)
   const [view, setView] = useState<'pcb' | 'dashboard'>('pcb');
-  const [isInspecting, setIsInspecting] = useState(false);
 
   // Persistent Datasets
   const [projects, setProjects] = useState<Project[]>([]);
@@ -22,41 +21,39 @@ export const App: React.FC = () => {
     setProfile(StorageService.getProfile());
   }, []);
 
-  const scrollToPortfolio = () => {
-    const el = document.getElementById('portfolio-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleEnterDashboard = () => {
+    setView('dashboard');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  const scrollToPCB = () => {
-    const el = document.getElementById('pcb-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleOpen3D = () => {
+    setView('pcb');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   return (
     <div className="w-full min-h-screen bg-[#121316] text-[#e4e4e7] overflow-x-hidden font-sans">
-      {/* 1. 3D PCB Motherboard Hero Canvas */}
-      <div id="pcb-section" className="relative w-full h-screen">
-        <PCB3DCanvas
-          onEnterPortfolio={scrollToPortfolio}
-        />
-      </div>
-
-      {/* 2. Main Workstation (About Me & Featured Projects) */}
-      <div id="portfolio-section" className="relative w-full">
-        <Dashboard
-          projects={projects}
-          setProjects={setProjects}
-          achievements={achievements}
-          setAchievements={setAchievements}
-          profile={profile}
-          setProfile={setProfile}
-          onOpen3DPCB={scrollToPCB}
-        />
-      </div>
+      {view === 'pcb' ? (
+        /* 1. 3D PCB Motherboard Hero Canvas - Landing View Only */
+        <div id="pcb-section" className="relative w-full h-screen">
+          <PCB3DCanvas
+            onEnterPortfolio={handleEnterDashboard}
+          />
+        </div>
+      ) : (
+        /* 2. Main Workstation (Dashboard) - 3D view is completely hidden and not in DOM */
+        <div id="portfolio-section" className="relative w-full">
+          <Dashboard
+            projects={projects}
+            setProjects={setProjects}
+            achievements={achievements}
+            setAchievements={setAchievements}
+            profile={profile}
+            setProfile={setProfile}
+            onOpen3DPCB={handleOpen3D}
+          />
+        </div>
+      )}
     </div>
   );
 };
