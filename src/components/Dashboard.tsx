@@ -1,5 +1,7 @@
 import React from 'react';
 import type { Project, EngineerProfile } from '../types';
+import { useTheme } from '../context/ThemeContext';
+import { TopNavbar } from './TopNavbar';
 import { ProjectsSection } from './ProjectsSection';
 import { AboutMeSection } from './AboutMeSection';
 import { ActivitiesSection } from './ActivitiesSection';
@@ -22,11 +24,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
   profile,
   onOpen3DPCB
 }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
-    <div className="min-h-screen bg-[#121316] text-[#e4e4e7] font-sans relative selection:bg-white selection:text-black">
-      
+    <div
+      className={`min-h-screen font-sans relative transition-colors duration-300 ${
+        isDark
+          ? 'bg-[#121316] text-[#e4e4e7] selection:bg-white selection:text-black'
+          : 'bg-[#f4f4f5] text-zinc-900 selection:bg-zinc-900 selection:text-white'
+      }`}
+    >
+      {/* Top Navbar with Theme Toggle (Black Mode & White Mode) */}
+      <TopNavbar onOpen3DPCB={onOpen3DPCB} />
+
       {/* Main Workstation Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
         {/* About Me - Hariharan Core Column */}
         <AboutMeSection profile={profile} onOpen3DPCB={onOpen3DPCB} />
 
@@ -46,18 +59,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </main>
 
-      {/* Footer in White and Gray */}
-      <footer className="border-t border-zinc-800 bg-[#0d0e11] py-8 mt-16 font-sans">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+      {/* Footer */}
+      <footer
+        className={`border-t py-8 mt-16 font-sans transition-colors duration-300 ${
+          isDark
+            ? 'border-zinc-800 bg-[#0d0e11] text-zinc-400'
+            : 'border-zinc-200 bg-white text-zinc-600'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-white" />
+            <Cpu className={`w-4 h-4 ${isDark ? 'text-white' : 'text-zinc-900'}`} />
             <span>Designed & Maintained by Hariharan K // Chennai Institute of Technology</span>
           </div>
 
-          <div className="flex items-center space-x-4 text-zinc-400">
+          <div className="flex items-center space-x-4">
             <span>Chennai, India</span>
             <span>•</span>
-            <span>Status: Operational</span>
+            <span className="font-semibold">{isDark ? 'Black Mode Active' : 'White Mode Active'}</span>
           </div>
         </div>
       </footer>
@@ -69,7 +88,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
             sound.playSignalPulse();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white shadow-xl hover:bg-zinc-800 hover:border-zinc-500 hover:scale-105 transition-all"
+          className={`p-3 rounded-xl border shadow-xl transition-all hover:scale-105 active:scale-95 ${
+            isDark
+              ? 'bg-zinc-900 border-zinc-700 text-white hover:bg-zinc-800 hover:border-zinc-500'
+              : 'bg-white border-zinc-300 text-zinc-900 hover:bg-zinc-100 hover:border-zinc-400'
+          }`}
           title="Scroll to Top"
         >
           <ArrowUp className="w-4 h-4" />

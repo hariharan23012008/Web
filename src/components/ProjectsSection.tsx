@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Project } from '../types';
+import { useTheme } from '../context/ThemeContext';
 import { sound } from '../utils/audio';
 import { GithubIcon } from './SocialIcons';
 import { 
@@ -13,6 +14,9 @@ interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
   const [modalTab, setModalTab] = useState<'overview' | 'schematic' | 'bom' | 'code'>('overview');
   const [copiedCode, setCopiedCode] = useState(false);
@@ -297,15 +301,23 @@ class PCBCounterfeitInspector:
   };
 
   return (
-    <section id="projects" className="py-8 relative w-full font-sans">
+    <section id="projects" className="py-6 relative w-full font-sans">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-800 pb-5">
+      <div
+        className={`flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b pb-5 transition-colors duration-300 ${
+          isDark ? 'border-zinc-800' : 'border-zinc-200'
+        }`}
+      >
         <div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight flex items-center gap-3">
-            <Cpu className="w-8 h-8 text-white" />
+          <h2
+            className={`text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-3 ${
+              isDark ? 'text-white' : 'text-zinc-950'
+            }`}
+          >
+            <Cpu className="w-8 h-8" />
             Featured Projects
           </h2>
-          <p className="text-sm text-zinc-400 mt-1 max-w-xl font-normal">
+          <p className={`text-sm mt-1 max-w-xl font-normal ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
             Touch or click any project picture below to view full hardware schematics, firmware code, and bill of materials.
           </p>
         </div>
@@ -317,22 +329,36 @@ class PCBCounterfeitInspector:
           <div
             key={project.id || idx}
             onClick={() => handleOpenProject(project)}
-            className="group relative cursor-pointer bg-[#18181b] border border-zinc-700/80 hover:border-zinc-400 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between"
+            className={`group relative cursor-pointer rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between border ${
+              isDark
+                ? 'bg-[#18181b] border-zinc-700/80 hover:border-zinc-400 text-white'
+                : 'bg-white border-zinc-200 hover:border-zinc-400 text-zinc-900 shadow-md'
+            }`}
           >
             <div>
               {/* Card Header */}
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4 text-xs">
-                <span className="font-semibold text-white flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-white" />
+              <div
+                className={`flex items-center justify-between border-b pb-3 mb-4 text-xs ${
+                  isDark ? 'border-zinc-800' : 'border-zinc-100'
+                }`}
+              >
+                <span className="font-semibold flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${isDark ? 'bg-white' : 'bg-zinc-900'}`} />
                   {project.category} Core
                 </span>
-                <span className="text-zinc-500 font-medium">
+                <span className={isDark ? 'text-zinc-500 font-medium' : 'text-zinc-400 font-medium'}>
                   Project #{idx + 1}
                 </span>
               </div>
 
               {/* Project Image Preview (TOUCH PICTURE TO VIEW DETAILS) */}
-              <div className="relative h-48 rounded-xl overflow-hidden mb-4 border border-zinc-700/80 bg-zinc-900 group-hover:border-zinc-400 transition-colors">
+              <div
+                className={`relative h-48 rounded-xl overflow-hidden mb-4 border transition-colors ${
+                  isDark
+                    ? 'border-zinc-700/80 bg-zinc-900 group-hover:border-zinc-400'
+                    : 'border-zinc-200 bg-zinc-100 group-hover:border-zinc-400'
+                }`}
+              >
                 <img
                   src={project.image.startsWith('http') ? project.image : `./${project.image.replace(/^\.?\/+/, '')}`}
                   alt={project.title}
@@ -341,7 +367,7 @@ class PCBCounterfeitInspector:
                 
                 {/* Touch hint overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
-                  <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-zinc-950 text-xs font-semibold shadow flex items-center gap-1.5 group-hover:bg-white transition-colors">
+                  <span className="px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-zinc-950 text-xs font-semibold shadow flex items-center gap-1.5 group-hover:bg-white transition-colors">
                     <span>Touch picture for details</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </span>
@@ -349,37 +375,47 @@ class PCBCounterfeitInspector:
               </div>
 
               {/* Title & Subtitle */}
-              <h3 className="text-lg font-bold text-white group-hover:text-zinc-100 transition-colors leading-snug">
+              <h3 className="text-lg font-bold group-hover:opacity-90 transition-opacity leading-snug">
                 {project.title}
               </h3>
-              <p className="text-xs text-zinc-400 mt-1 font-medium">
+              <p className={`text-xs mt-1 font-medium ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 {project.subtitle}
               </p>
-              <p className="text-xs text-zinc-300 mt-2.5 line-clamp-3 leading-relaxed font-normal">
+              <p className={`text-xs mt-2.5 line-clamp-3 leading-relaxed font-normal ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`}>
                 {project.description}
               </p>
             </div>
 
-            <div className="mt-5 pt-3 border-t border-zinc-800">
+            <div className={`mt-5 pt-3 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-100'}`}>
               {/* Tech Stack Badges */}
               <div className="flex flex-wrap gap-1 mb-3">
                 {project.techStack.slice(0, 4).map((tech, tIdx) => (
                   <span
                     key={tIdx}
-                    className="px-2 py-0.5 rounded text-[11px] bg-zinc-800 text-zinc-300 border border-zinc-700"
+                    className={`px-2 py-0.5 rounded text-[11px] border font-medium ${
+                      isDark
+                        ? 'bg-zinc-800 text-zinc-300 border-zinc-700'
+                        : 'bg-zinc-100 text-zinc-700 border-zinc-200'
+                    }`}
                   >
                     {tech}
                   </span>
                 ))}
                 {project.techStack.length > 4 && (
-                  <span className="px-2 py-0.5 rounded text-[11px] bg-zinc-900 text-zinc-500 border border-zinc-800">
+                  <span
+                    className={`px-2 py-0.5 rounded text-[11px] border ${
+                      isDark
+                        ? 'bg-zinc-900 text-zinc-500 border-zinc-800'
+                        : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                    }`}
+                  >
                     +{project.techStack.length - 4} more
                   </span>
                 )}
               </div>
 
               {/* Bottom Action Line */}
-              <div className="flex items-center justify-between text-xs font-semibold text-white group-hover:text-zinc-200">
+              <div className="flex items-center justify-between text-xs font-semibold group-hover:opacity-90">
                 <span className="flex items-center gap-1">
                   View Full Project Details <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
@@ -389,7 +425,11 @@ class PCBCounterfeitInspector:
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1 rounded hover:bg-zinc-800 text-zinc-400 hover:text-white"
+                    className={`p-1 rounded transition-colors ${
+                      isDark
+                        ? 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                        : 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
+                    }`}
                   >
                     <GithubIcon className="w-4 h-4" />
                   </a>
@@ -408,19 +448,31 @@ class PCBCounterfeitInspector:
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl max-h-[90vh] flex flex-col bg-[#18181b] border border-zinc-700 rounded-3xl shadow-2xl overflow-hidden text-white font-sans"
+            className={`relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl shadow-2xl overflow-hidden font-sans border transition-colors ${
+              isDark
+                ? 'bg-[#18181b] border-zinc-700 text-white'
+                : 'bg-white border-zinc-200 text-zinc-900'
+            }`}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 bg-zinc-900 border-b border-zinc-800">
+            <div
+              className={`flex items-center justify-between px-6 py-4 border-b ${
+                isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'
+              }`}
+            >
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-xl bg-zinc-800 border border-zinc-700">
-                  <Cpu className="w-5 h-5 text-white" />
+                <div
+                  className={`p-2 rounded-xl border ${
+                    isDark ? 'bg-zinc-800 border-zinc-700 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+                  }`}
+                >
+                  <Cpu className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold">
                     {activeModalProject.title}
                   </h3>
-                  <p className="text-xs text-zinc-400 font-medium">
+                  <p className={`text-xs font-medium ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     {activeModalProject.subtitle}
                   </p>
                 </div>
@@ -432,7 +484,11 @@ class PCBCounterfeitInspector:
                     href={activeModalProject.demoUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold shadow transition-all"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow transition-all ${
+                      isDark
+                        ? 'bg-white text-zinc-950 hover:bg-zinc-200'
+                        : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    }`}
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>Problem Statement</span>
@@ -443,7 +499,11 @@ class PCBCounterfeitInspector:
                     href={activeModalProject.githubUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-white border border-zinc-700 transition-all font-medium"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs border transition-all font-medium ${
+                      isDark
+                        ? 'bg-zinc-800 hover:bg-zinc-700 text-white border-zinc-700'
+                        : 'bg-white hover:bg-zinc-100 text-zinc-900 border-zinc-300'
+                    }`}
                   >
                     <GithubIcon className="w-3.5 h-3.5" />
                     <span>GitHub</span>
@@ -451,7 +511,11 @@ class PCBCounterfeitInspector:
                 )}
                 <button
                   onClick={handleCloseModal}
-                  className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border border-zinc-700 transition-all"
+                  className={`p-2 rounded-xl border transition-all ${
+                    isDark
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border-zinc-700'
+                      : 'bg-white hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 border-zinc-200'
+                  }`}
                   title="Close modal"
                 >
                   <X className="w-4 h-4" />
@@ -459,14 +523,18 @@ class PCBCounterfeitInspector:
               </div>
             </div>
 
-            {/* Modal Tabs in White and Gray */}
-            <div className="flex border-b border-zinc-800 px-6 bg-zinc-900/60 overflow-x-auto text-xs font-semibold">
+            {/* Modal Tabs */}
+            <div
+              className={`flex border-b px-6 overflow-x-auto text-xs font-semibold ${
+                isDark ? 'bg-zinc-900/60 border-zinc-800' : 'bg-zinc-100/60 border-zinc-200'
+              }`}
+            >
               <button
                 onClick={() => { setModalTab('overview'); sound.playRelayClick(); }}
                 className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all ${
                   modalTab === 'overview'
-                    ? 'border-white text-white'
-                    : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                    ? isDark ? 'border-white text-white' : 'border-zinc-950 text-zinc-950'
+                    : isDark ? 'border-transparent text-zinc-400 hover:text-zinc-200' : 'border-transparent text-zinc-500 hover:text-zinc-900'
                 }`}
               >
                 Overview & Architecture
@@ -476,8 +544,8 @@ class PCBCounterfeitInspector:
                   onClick={() => { setModalTab('bom'); sound.playRelayClick(); }}
                   className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all ${
                     modalTab === 'bom'
-                      ? 'border-white text-white'
-                      : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                      ? isDark ? 'border-white text-white' : 'border-zinc-950 text-zinc-950'
+                      : isDark ? 'border-transparent text-zinc-400 hover:text-zinc-200' : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
                   <Wrench className="w-3.5 h-3.5" />
@@ -489,8 +557,8 @@ class PCBCounterfeitInspector:
                   onClick={() => { setModalTab('code'); sound.playRelayClick(); }}
                   className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all ${
                     modalTab === 'code'
-                      ? 'border-white text-white'
-                      : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                      ? isDark ? 'border-white text-white' : 'border-zinc-950 text-zinc-950'
+                      : isDark ? 'border-transparent text-zinc-400 hover:text-zinc-200' : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
                   <Code2 className="w-3.5 h-3.5" />
@@ -502,8 +570,8 @@ class PCBCounterfeitInspector:
                   onClick={() => { setModalTab('schematic'); sound.playRelayClick(); }}
                   className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all ${
                     modalTab === 'schematic'
-                      ? 'border-white text-white'
-                      : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                      ? isDark ? 'border-white text-white' : 'border-zinc-950 text-zinc-950'
+                      : isDark ? 'border-transparent text-zinc-400 hover:text-zinc-200' : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
@@ -519,7 +587,7 @@ class PCBCounterfeitInspector:
               {modalTab === 'overview' && (
                 <div className="space-y-6 animate-fadeIn">
                   {/* Hero Project Image */}
-                  <div className="relative h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-950">
+                  <div className={`relative h-64 sm:h-72 rounded-2xl overflow-hidden border ${isDark ? 'border-zinc-700 bg-zinc-950' : 'border-zinc-300 bg-zinc-100'}`}>
                     <img
                       src={activeModalProject.image.startsWith('http') ? activeModalProject.image : `./${activeModalProject.image.replace(/^\.?\/+/, '')}`}
                       alt={activeModalProject.title}
@@ -531,32 +599,48 @@ class PCBCounterfeitInspector:
                   {activeModalProject.metrics && (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {activeModalProject.metrics.map((m, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-center">
-                          <div className="text-xs text-zinc-400 font-medium">{m.label}</div>
-                          <div className="text-base font-bold text-white mt-1">{m.value}</div>
+                        <div
+                          key={idx}
+                          className={`p-3.5 rounded-xl border text-center ${
+                            isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'
+                          }`}
+                        >
+                          <div className={`text-xs font-medium ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{m.label}</div>
+                          <div className={`text-base font-bold mt-1 ${isDark ? 'text-white' : 'text-zinc-950'}`}>{m.value}</div>
                         </div>
                       ))}
                     </div>
                   )}
 
                   {/* Description Text */}
-                  <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-3">
-                    <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+                  <div
+                    className={`p-5 rounded-xl border space-y-3 ${
+                      isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'
+                    }`}
+                  >
+                    <h4 className={`text-sm font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-zinc-950'}`}>
                       Project Description & Problem Statement
                     </h4>
-                    <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line font-normal">
+                    <p className={`text-sm leading-relaxed whitespace-pre-line font-normal ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
                       {activeModalProject.longDescription || activeModalProject.description}
                     </p>
                   </div>
 
                   {/* Tech Stack Chips */}
                   <div>
-                    <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+                    <h4 className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                       Hardware & Software Stack
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {activeModalProject.techStack.map((tech, i) => (
-                        <span key={i} className="px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-700 text-xs font-medium text-zinc-200">
+                        <span
+                          key={i}
+                          className={`px-3 py-1 rounded-lg border text-xs font-medium ${
+                            isDark
+                              ? 'bg-zinc-900 border-zinc-700 text-zinc-200'
+                              : 'bg-zinc-100 border-zinc-300 text-zinc-800'
+                          }`}
+                        >
                           {tech}
                         </span>
                       ))}
@@ -568,12 +652,12 @@ class PCBCounterfeitInspector:
               {/* TAB 2: BILL OF MATERIALS (BOM) */}
               {modalTab === 'bom' && activeModalProject.bom && (
                 <div className="space-y-4 animate-fadeIn">
-                  <div className="text-sm font-semibold text-zinc-400">
+                  <div className={`text-sm font-semibold ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                     Component Bill of Materials (BOM)
                   </div>
-                  <div className="rounded-xl border border-zinc-800 overflow-hidden">
+                  <div className={`rounded-xl border overflow-hidden ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-zinc-900 text-zinc-400 uppercase border-b border-zinc-800">
+                      <thead className={`uppercase border-b ${isDark ? 'bg-zinc-900 text-zinc-400 border-zinc-800' : 'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
                         <tr>
                           <th className="p-3">Designator</th>
                           <th className="p-3">Component Name</th>
@@ -582,14 +666,14 @@ class PCBCounterfeitInspector:
                           <th className="p-3">Role & Function</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-zinc-800">
+                      <tbody className={`divide-y ${isDark ? 'divide-zinc-800' : 'divide-zinc-200'}`}>
                         {activeModalProject.bom.map((b, i) => (
-                          <tr key={i} className="hover:bg-zinc-900/50">
-                            <td className="p-3 font-bold text-white">{b.ref}</td>
-                            <td className="p-3 text-zinc-200">{b.name}</td>
-                            <td className="p-3 text-zinc-400">{b.package}</td>
-                            <td className="p-3 font-semibold text-white">{b.qty}</td>
-                            <td className="p-3 text-zinc-400">{b.description}</td>
+                          <tr key={i} className={isDark ? 'hover:bg-zinc-900/50' : 'hover:bg-zinc-50'}>
+                            <td className={`p-3 font-bold ${isDark ? 'text-white' : 'text-zinc-950'}`}>{b.ref}</td>
+                            <td className={`p-3 ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>{b.name}</td>
+                            <td className={`p-3 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{b.package}</td>
+                            <td className={`p-3 font-semibold ${isDark ? 'text-white' : 'text-zinc-950'}`}>{b.qty}</td>
+                            <td className={`p-3 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{b.description}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -602,17 +686,22 @@ class PCBCounterfeitInspector:
               {modalTab === 'code' && activeModalProject.codeSnippet && (
                 <div className="space-y-3 animate-fadeIn">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-zinc-400">
+                    <span className={`text-xs font-semibold ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                       File: {activeModalProject.codeSnippet.filename}
                     </span>
                     <button
                       onClick={() => handleCopyCode(activeModalProject.codeSnippet!.code)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-white border border-zinc-700 transition-all font-medium"
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border transition-all font-medium ${
+                        isDark
+                          ? 'bg-zinc-800 hover:bg-zinc-700 text-white border-zinc-700'
+                          : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300'
+                      }`}
                     >
-                      {copiedCode ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedCode ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
                     </button>
                   </div>
+                  {/* Code block always keeps high-contrast dark readability */}
                   <pre className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-200 overflow-x-auto font-mono leading-relaxed">
                     <code>{activeModalProject.codeSnippet.code}</code>
                   </pre>
@@ -622,10 +711,10 @@ class PCBCounterfeitInspector:
               {/* TAB 4: SCHEMATICS */}
               {modalTab === 'schematic' && activeModalProject.schematicImage && (
                 <div className="space-y-4 animate-fadeIn">
-                  <div className="text-sm font-semibold text-zinc-400">
+                  <div className={`text-sm font-semibold ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                     Circuit Schematic Diagram
                   </div>
-                  <div className="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 p-2">
+                  <div className={`rounded-xl overflow-hidden border p-2 ${isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-zinc-50'}`}>
                     <img
                       src={activeModalProject.schematicImage}
                       alt="Hardware Schematic"

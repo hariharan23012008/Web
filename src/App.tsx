@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import { PCB3DCanvas } from './components/PCB3DCanvas';
 import { Dashboard } from './components/Dashboard';
 import { StorageService } from './utils/storage';
 import type { Project, Achievement, EngineerProfile } from './types';
 
-export const App: React.FC = () => {
+const PortfolioContent: React.FC = () => {
   // Navigation View: 'pcb' (Landing 3D Experience) or 'dashboard' (Main Engineering Lab)
   const [view, setView] = useState<'pcb' | 'dashboard'>('pcb');
 
@@ -32,10 +33,10 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#121316] text-[#e4e4e7] overflow-x-hidden font-sans">
+    <div className="w-full min-h-screen overflow-x-hidden font-sans">
       {view === 'pcb' ? (
         /* 1. 3D PCB Motherboard Hero Canvas - Landing View Only */
-        <div id="pcb-section" className="relative w-full h-screen">
+        <div id="pcb-section" className="relative w-full h-screen bg-[#121316]">
           <PCB3DCanvas
             onEnterPortfolio={handleEnterDashboard}
           />
@@ -55,6 +56,14 @@ export const App: React.FC = () => {
         </div>
       )}
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <PortfolioContent />
+    </ThemeProvider>
   );
 };
 
