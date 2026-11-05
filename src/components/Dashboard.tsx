@@ -1,9 +1,11 @@
 import React from 'react';
 import type { Project, EngineerProfile } from '../types';
+import { PcbBoardViewer } from './PcbBoardViewer';
 import { ProjectsSection } from './ProjectsSection';
 import { AboutMeSection } from './AboutMeSection';
 import { sound } from '../utils/audio';
 import { Cpu, ArrowUp } from 'lucide-react';
+import { GithubIcon } from './SocialIcons';
 
 interface DashboardProps {
   projects: Project[];
@@ -12,23 +14,81 @@ interface DashboardProps {
   setAchievements?: any;
   profile: EngineerProfile;
   setProfile?: any;
-  onOpen3DPCB: () => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
   projects,
-  profile,
-  onOpen3DPCB
+  profile
 }) => {
+  const scrollTo = (id: string) => {
+    sound.playRelayClick();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#121316] text-[#e4e4e7] font-sans relative selection:bg-white selection:text-black">
       
+      {/* Top Clean Engineering Header / Navigation Bar */}
+      <header className="sticky top-0 z-40 bg-[#121316]/90 backdrop-blur-md border-b border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-xl bg-zinc-900 border border-zinc-700/80">
+              <Cpu className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <span className="text-base font-bold text-white tracking-wide block">
+                Hariharan K
+              </span>
+              <span className="text-xs text-zinc-400 font-mono hidden sm:block">
+                Electronics & PCB Systems Engineer
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex items-center space-x-1 sm:space-x-3 text-xs font-semibold">
+            <button
+              onClick={() => scrollTo('pcb-board')}
+              className="px-3 py-1.5 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              PCB Board
+            </button>
+            <button
+              onClick={() => scrollTo('about')}
+              className="px-3 py-1.5 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              About Me
+            </button>
+            <button
+              onClick={() => scrollTo('projects')}
+              className="px-3 py-1.5 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              Featured Projects
+            </button>
+            <a
+              href="https://github.com/hariharan23012008"
+              target="_blank"
+              rel="noreferrer"
+              className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 transition-colors ml-1"
+              title="GitHub Profile"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
+          </nav>
+        </div>
+      </header>
+
       {/* Main Workstation Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        {/* About Me - Hariharan Core Column */}
-        <AboutMeSection profile={profile} onOpen3DPCB={onOpen3DPCB} />
+        {/* 1. PCB Board Integrated Directly Inside Dashboard */}
+        <PcbBoardViewer />
 
-        {/* Featured Projects Column - Touch Picture to view details */}
+        {/* 2. About Me - Hariharan Core Column */}
+        <AboutMeSection profile={profile} />
+
+        {/* 3. Featured Projects Column - VoltX & DriftSense */}
         <div className="w-full">
           <ProjectsSection projects={projects} />
         </div>

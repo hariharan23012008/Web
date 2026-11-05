@@ -1,14 +1,12 @@
 import React from 'react';
 import type { EngineerProfile } from '../types';
-import { sound } from '../utils/audio';
-import { Sparkles, Eye } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface AboutMeSectionProps {
   profile?: EngineerProfile;
-  onOpen3DPCB?: () => void;
 }
 
-export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) => {
+export const AboutMeSection: React.FC<AboutMeSectionProps> = () => {
   return (
     <section id="about" className="py-8 relative w-full font-sans">
       {/* Clean White and Gray Palette Container */}
@@ -24,19 +22,6 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
               About Me <span className="text-zinc-400 font-normal">– Hariharan</span>
             </h1>
           </div>
-
-          {onOpen3DPCB && (
-            <button
-              onClick={() => {
-                sound.playSignalPulse();
-                onOpen3DPCB();
-              }}
-              className="self-start sm:self-auto px-5 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm transition-all shadow-md flex items-center gap-2 hover:scale-105 active:scale-95"
-            >
-              <Eye className="w-4 h-4" />
-              View 3D PCB Board
-            </button>
-          )}
         </div>
 
         {/* Profile Grid */}
