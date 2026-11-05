@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import type { Project, Achievement, EngineerProfile } from '../types';
 import { StorageService } from '../utils/storage';
 import { sound } from '../utils/audio';
-import { 
-  Lock, Unlock, Plus, Trash2, Edit3, Save, X, 
+import {
+  Lock, Unlock, Plus, Trash2, Edit3, Save, X,
   Download, Upload, RefreshCw, AlertCircle
 } from 'lucide-react';
 
@@ -171,7 +171,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-xl animate-fadeIn">
       <div className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-[#0A0E14] border-2 border-[#00FF9C] rounded-2xl shadow-2xl glow-green overflow-hidden">
-        
+
         {/* Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 bg-[#0B4D38]/50 border-b border-[#00FF9C]/30">
           <div className="flex items-center space-x-3">
@@ -243,30 +243,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         ) : (
           <div className="flex-1 flex flex-col overflow-hidden">
-            
+
             {/* Sub-Navigation Tabs */}
             <div className="flex items-center border-b border-white/10 px-6 bg-[#080B10] overflow-x-auto text-xs font-mono">
               <button
                 onClick={() => { setActiveTab('projects'); sound.playRelayClick(); }}
-                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${
-                  activeTab === 'projects' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
-                }`}
+                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${activeTab === 'projects' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
+                  }`}
               >
                 PROJECTS ({projects.length})
               </button>
               <button
                 onClick={() => { setActiveTab('achievements'); sound.playRelayClick(); }}
-                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${
-                  activeTab === 'achievements' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
-                }`}
+                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${activeTab === 'achievements' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
+                  }`}
               >
                 ACHIEVEMENTS ({achievements.length})
               </button>
               <button
                 onClick={() => { setActiveTab('backup'); sound.playRelayClick(); }}
-                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${
-                  activeTab === 'backup' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
-                }`}
+                className={`py-3 px-4 font-bold border-b-2 flex items-center gap-2 ${activeTab === 'backup' ? 'border-[#00FF9C] text-[#00FF9C]' : 'border-transparent text-[#C0C6CE]'
+                  }`}
               >
                 DATABASE BACKUP / RESTORE
               </button>
@@ -274,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
             {/* Tab Body */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              
+
               {activeTab === 'projects' && (
                 <div className="space-y-6 animate-fadeIn">
                   {!isEditingProject ? (
