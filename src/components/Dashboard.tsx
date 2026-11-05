@@ -2,6 +2,7 @@ import React from 'react';
 import type { Project, EngineerProfile } from '../types';
 import { ProjectsSection } from './ProjectsSection';
 import { AboutMeSection } from './AboutMeSection';
+import { CurriculumVitaeSection } from './CurriculumVitaeSection';
 import { sound } from '../utils/audio';
 import { Cpu, ArrowUp } from 'lucide-react';
 
@@ -31,6 +32,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Featured Projects Column - Touch Picture to view details */}
         <div className="w-full">
           <ProjectsSection projects={projects} />
+        </div>
+
+        {/* Curriculum Vitae - Down under Featured Projects */}
+        <div className="w-full">
+          <CurriculumVitaeSection />
         </div>
       </main>
 
