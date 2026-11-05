@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { sound } from '../utils/audio';
-import { Sun, Moon, Eye, Cpu } from 'lucide-react';
+import { Sun, Moon, Eye } from 'lucide-react';
 
 interface TopNavbarProps {
   onOpen3DPCB?: () => void;
@@ -27,41 +27,13 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpen3DPCB }) => {
           : 'bg-white/90 border-zinc-200 text-zinc-900 shadow-sm'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
         
-        {/* Left: Branding & Tagline */}
-        <div className="flex items-center gap-3">
-          <div
-            className={`p-2 rounded-xl border transition-colors ${
-              isDark ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-zinc-100 border-zinc-300 text-zinc-900'
-            }`}
-          >
-            <Cpu className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm sm:text-base tracking-tight">Hariharan K</span>
-              <span
-                className={`hidden sm:inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${
-                  isDark
-                    ? 'bg-zinc-900 text-zinc-300 border-zinc-700'
-                    : 'bg-zinc-100 text-zinc-700 border-zinc-300'
-                }`}
-              >
-                CIT • Electronics
-              </span>
-            </div>
-            <p className="text-[11px] text-zinc-500 font-medium hidden md:block">
-              Embedded Systems • IoT • VLSI Metrology
-            </p>
-          </div>
-        </div>
-
-        {/* Center: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold">
+        {/* Left: Navigation Links */}
+        <nav className="flex items-center gap-4 sm:gap-6 text-xs font-semibold overflow-x-auto py-1">
           <a
             href="#about"
-            className={`transition-colors ${
+            className={`transition-colors whitespace-nowrap ${
               isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
@@ -69,7 +41,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpen3DPCB }) => {
           </a>
           <a
             href="#projects"
-            className={`transition-colors ${
+            className={`transition-colors whitespace-nowrap ${
               isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
@@ -77,7 +49,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpen3DPCB }) => {
           </a>
           <a
             href="#activities"
-            className={`transition-colors ${
+            className={`transition-colors whitespace-nowrap ${
               isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
@@ -85,7 +57,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpen3DPCB }) => {
           </a>
           <a
             href="#curriculum-vitae"
-            className={`transition-colors ${
+            className={`transition-colors whitespace-nowrap ${
               isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
@@ -94,7 +66,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpen3DPCB }) => {
         </nav>
 
         {/* Right: 3D PCB Button & Theme Switcher */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {onOpen3DPCB && (
             <button
               onClick={() => {
