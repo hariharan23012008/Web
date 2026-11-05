@@ -1,17 +1,27 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light">
+    <script>
+      try {
+        const theme = localStorage.getItem("portfolio_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.add(theme);
+        const meta = document.querySelector('meta[name="color-scheme"]');
+        if (meta) meta.content = theme;
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300FF9C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='4' width='16' height='16' rx='2'/><rect x='9' y='9' width='6' height='6'/><line x1='9' y1='1' x2='9' y2='4'/><line x1='15' y1='1' x2='15' y2='4'/><line x1='9' y1='20' x2='9' y2='23'/><line x1='15' y1='20' x2='15' y2='23'/><line x1='20' y1='9' x2='23' y2='9'/><line x1='20' y1='14' x2='23' y2='14'/><line x1='1' y1='9' x2='4' y2='9'/><line x1='1' y1='14' x2='4' y2='14'/></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hariharan K | Electronics & Hardware Engineering Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-B5p2lC3_.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-1VSXkytu.css">
+    <script type="module" crossorigin src="./assets/index-CaAo5t-O.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CXa79GA1.css">
   </head>
-  <body class="bg-[#121316] text-[#e4e4e7] overflow-x-hidden selection:bg-white selection:text-black">
+  <body class="overflow-x-hidden">
     <div id="root"></div>
   </body>
 </html>
