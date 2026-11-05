@@ -78,7 +78,7 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     stateRef.current.camera = camera;
 
     // --- 2. Realistic Studio & Accent Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xdcfce7, 1.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
     // Warm Key Light for crisp metallic specular highlights
@@ -97,12 +97,12 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     scene.add(keyLight);
 
     // Cool Green/Cyan Rim Fill
-    const fillLight = new THREE.DirectionalLight(0x86efac, 1.2);
+    const fillLight = new THREE.DirectionalLight(0x10b981, 1.0);
     fillLight.position.set(-8, 8, -6);
     scene.add(fillLight);
 
     // Under-glow
-    const underLight = new THREE.PointLight(0x15803d, 1.0, 18);
+    const underLight = new THREE.PointLight(0x064e3b, 1.2, 18);
     underLight.position.set(0, -3.5, 0);
     scene.add(underLight);
 
@@ -124,11 +124,11 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
 
     if (ctx) {
       // 1. Authentic Emerald Green PCB Solder Mask (Matching physical reference board)
-      ctx.fillStyle = '#15803d';
+      ctx.fillStyle = '#064e3b';
       ctx.fillRect(0, 0, pcbCanvas.width, pcbCanvas.height);
 
       // Subtle PCB ground plane & fiber pattern
-      ctx.fillStyle = '#166534';
+      ctx.fillStyle = '#032817';
       for (let y = 0; y < pcbCanvas.height; y += 10) {
         ctx.fillRect(0, y, pcbCanvas.width, 2);
       }
@@ -150,7 +150,7 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
       }
 
       // 3. Realistic Raised Copper Signal Traces (Under translucent green mask)
-      ctx.strokeStyle = '#22c55e';
+      ctx.strokeStyle = '#0d6b3c';
       ctx.lineWidth = 6;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'miter';
