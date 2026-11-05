@@ -78,11 +78,11 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     stateRef.current.camera = camera;
 
     // --- 2. Realistic Studio & Accent Lighting ---
-    const ambientLight = new THREE.AmbientLight(0x0a1c13, 1.8);
+    const ambientLight = new THREE.AmbientLight(0xdcfce7, 1.5);
     scene.add(ambientLight);
 
     // Warm Key Light for crisp metallic specular highlights
-    const keyLight = new THREE.DirectionalLight(0xfff8ee, 2.3);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
     keyLight.position.set(7, 14, 9);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
@@ -96,13 +96,13 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    // Cool Cyan Rim Fill
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
+    // Cool Green/Cyan Rim Fill
+    const fillLight = new THREE.DirectionalLight(0x86efac, 1.2);
     fillLight.position.set(-8, 8, -6);
     scene.add(fillLight);
 
-    // Deep Emerald Under-glow
-    const underLight = new THREE.PointLight(0x059669, 1.2, 18);
+    // Under-glow
+    const underLight = new THREE.PointLight(0x15803d, 1.0, 18);
     underLight.position.set(0, -3.5, 0);
     scene.add(underLight);
 
@@ -123,13 +123,35 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     const ctx = pcbCanvas.getContext('2d');
 
     if (ctx) {
-      // 1. Plain Solid Green PCB Solder Mask (Clean & Smooth)
-      ctx.fillStyle = '#107c41';
+      // 1. Authentic Emerald Green PCB Solder Mask (Matching physical reference board)
+      ctx.fillStyle = '#15803d';
       ctx.fillRect(0, 0, pcbCanvas.width, pcbCanvas.height);
 
-      // 2. Realistic Copper Traces (Golden-Amber with 45-degree chamfers)
-      ctx.strokeStyle = '#c69239';
-      ctx.lineWidth = 5;
+      // Subtle PCB ground plane & fiber pattern
+      ctx.fillStyle = '#166534';
+      for (let y = 0; y < pcbCanvas.height; y += 10) {
+        ctx.fillRect(0, y, pcbCanvas.width, 2);
+      }
+
+      // 2. Gold Edge Card Connector Fingers along top edge (like in reference image)
+      const fingerWidth = 32;
+      const fingerHeight = 110;
+      const fingerSpacing = 48;
+      ctx.fillStyle = '#d4af37';
+      for (let f = 0; f < 38; f++) {
+        const fx = 120 + f * fingerSpacing;
+        if (fx + fingerWidth < pcbCanvas.width - 120) {
+          ctx.fillRect(fx, 15, fingerWidth, fingerHeight);
+          // Finger gold highlight
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillRect(fx + 2, 17, fingerWidth - 4, 8);
+          ctx.fillStyle = '#d4af37';
+        }
+      }
+
+      // 3. Realistic Raised Copper Signal Traces (Under translucent green mask)
+      ctx.strokeStyle = '#22c55e';
+      ctx.lineWidth = 6;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'miter';
 
@@ -196,54 +218,27 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
         ctx.fill();
       });
 
-      // 4. Crisp White Silkscreen Markings (Clean Common Font)
-      ctx.fillStyle = '#ffffff';
+      // 5. White Silkscreen Component Outlines ONLY (NO text or letters on the board)
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
 
-      // Title & Architecture silkscreen
-      ctx.font = 'bold 24px Arial, sans-serif';
-      ctx.fillText('EMBEDDED CONTROL MOTHERBOARD // ROBOTICS & RADIO CORE', 120, 90);
-      ctx.font = '16px Arial, sans-serif';
-      ctx.fillText('DESIGNED BY HARIHARAN K • REV 4.2 HIGH-SPEED PCB', 120, 120);
-
-      // ESP32 Silkscreen Outline & Labels
+      // ESP32 Silkscreen Outline
       ctx.strokeRect(320, 180, 380, 600);
-      ctx.fillText('ESP32-WROOM-32D', 410, 215);
-      ctx.fillText('GND  5V  RX  TX  EN', 340, 760);
 
       // OLED Silkscreen Box
       ctx.strokeRect(1320, 480, 420, 420);
-      ctx.fillText('0.96" I2C OLED (SSD1306)', 1360, 515);
-      ctx.fillText('GND  VCC  SCL  SDA', 1420, 545);
 
       // MCU Outline & Pin 1 Indicator
       ctx.strokeRect(840, 640, 340, 340);
-      ctx.fillText('U1: STM32F407VGT6', 870, 630);
       ctx.beginPath();
       ctx.arc(860, 660, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
       ctx.fill();
 
-      // Tactile Buttons Silkscreen (UP, DOWN, OK)
-      ctx.font = 'bold 26px Arial, sans-serif';
-      ctx.fillText('UP', 1335, 1340);
-      ctx.fillText('DOWN', 1490, 1340);
-      ctx.fillText('OK', 1690, 1340);
-      ctx.font = '14px Arial, sans-serif';
-      ctx.fillText('SW1', 1345, 1220);
-      ctx.fillText('SW2', 1515, 1220);
-      ctx.fillText('SW3', 1695, 1220);
-
-      // Terminal Blocks Silkscreen Labels
-      ctx.font = 'bold 15px Arial, sans-serif';
-      ctx.fillText('5V  GND', 210, 175);
-      ctx.fillText('MOT_A', 380, 175);
-      ctx.fillText('MOT_B', 560, 175);
-      ctx.fillText('SERVO_1', 750, 175);
-      ctx.fillText('SERVO_2', 950, 175);
-      ctx.fillText('BAT_IN', 1150, 175);
-      ctx.fillText('RADIO_RX', 1350, 175);
-      ctx.fillText('CAN_BUS', 1550, 175);
+      // Tactile Buttons Silkscreen Boxes
+      ctx.strokeRect(1320, 1200, 110, 110);
+      ctx.strokeRect(1480, 1200, 110, 110);
+      ctx.strokeRect(1680, 1200, 110, 110);
 
       // Corner Mounting Holes with Annular Copper Rings
       const corners = [
@@ -270,8 +265,8 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
 
     const boardMat = new THREE.MeshStandardMaterial({
       map: pcbTexture,
-      roughness: 0.32,
-      metalness: 0.15
+      roughness: 0.28,
+      metalness: 0.12
     });
     stateRef.current.materials.push(boardMat);
 
@@ -340,24 +335,17 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     shieldMesh.position.set(0, 0.22, 0.2);
     espGroup.add(shieldMesh);
 
-    // Laser Engraving on ESP32 Shield
+    // Brushed Metallic RF Shielding Can (Clean, no text)
     const shieldCanvas = document.createElement('canvas');
     shieldCanvas.width = 512;
     shieldCanvas.height = 512;
     const sCtx = shieldCanvas.getContext('2d');
     if (sCtx) {
-      sCtx.fillStyle = '#c5cbd3';
+      sCtx.fillStyle = '#cbd5e1';
       sCtx.fillRect(0, 0, 512, 512);
-      sCtx.fillStyle = '#475569';
-      sCtx.font = 'bold 44px Arial, sans-serif';
-      sCtx.textAlign = 'center';
-      sCtx.fillText('ESP-WROOM-32', 256, 160);
-      sCtx.font = 'bold 28px Arial, sans-serif';
-      sCtx.fillText('ESPRESSIF', 256, 230);
-      sCtx.font = '24px Arial, sans-serif';
-      sCtx.fillText('FCC ID: 2AC7Z-ESPWROOM32', 256, 290);
-      sCtx.fillText('Wi-Fi + BLE 4.2 CORE', 256, 350);
-      sCtx.strokeRect(40, 40, 432, 432);
+      sCtx.strokeStyle = '#94a3b8';
+      sCtx.lineWidth = 10;
+      sCtx.strokeRect(30, 30, 452, 452);
     }
     const shieldTex = new THREE.CanvasTexture(shieldCanvas);
     const shieldLabelMat = new THREE.MeshBasicMaterial({ map: shieldTex });
@@ -625,28 +613,36 @@ export const PCB3DCanvas: React.FC<PCB3DCanvasProps> = ({
     mcuBody.position.y = 0.13;
     mcuGroup.add(mcuBody);
 
-    // Laser engraved badge on MCU
+    // Realistic IC surface with circular center mold dimple (Matching physical reference board, NO text)
     const mcuBadgeGeo = new THREE.PlaneGeometry(1.7, 1.7);
     const mcuBadgeCanvas = document.createElement('canvas');
     mcuBadgeCanvas.width = 512;
     mcuBadgeCanvas.height = 512;
     const bCtx = mcuBadgeCanvas.getContext('2d');
     if (bCtx) {
-      bCtx.fillStyle = '#14181f';
+      bCtx.fillStyle = '#151921';
       bCtx.fillRect(0, 0, 512, 512);
-      bCtx.fillStyle = '#cbd5e1';
-      bCtx.font = 'bold 38px Arial, sans-serif';
-      bCtx.textAlign = 'center';
-      bCtx.fillText('STM32F407VGT6', 256, 170);
-      bCtx.font = '28px Arial, sans-serif';
-      bCtx.fillText('ARM CORTEX-M4F', 256, 230);
-      bCtx.fillText('168MHz / 1MB FLASH', 256, 290);
-      bCtx.font = '24px Arial, sans-serif';
-      bCtx.fillText('ARM ARCHITECTURE', 256, 350);
+
+      // Authentic circular silver/aluminum center dot (like in user reference photo)
+      bCtx.beginPath();
+      bCtx.arc(256, 256, 75, 0, Math.PI * 2);
+      bCtx.fillStyle = '#e2e8f0';
+      bCtx.fill();
+      bCtx.lineWidth = 5;
+      bCtx.strokeStyle = '#94a3b8';
+      bCtx.stroke();
+
+      // Subtle inner ring
+      bCtx.beginPath();
+      bCtx.arc(256, 256, 50, 0, Math.PI * 2);
+      bCtx.strokeStyle = '#cbd5e1';
+      bCtx.lineWidth = 2;
+      bCtx.stroke();
+
       // Pin 1 dot
       bCtx.beginPath();
       bCtx.arc(50, 50, 16, 0, Math.PI * 2);
-      bCtx.fillStyle = '#ffffff';
+      bCtx.fillStyle = '#334155';
       bCtx.fill();
     }
     const badgeTex = new THREE.CanvasTexture(mcuBadgeCanvas);
