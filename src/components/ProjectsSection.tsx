@@ -4,21 +4,18 @@ import { sound } from '../utils/audio';
 import { GithubIcon } from './SocialIcons';
 import { 
   Cpu, Code2, Layers, Wrench, 
-  X, Check, Copy, ChevronRight, Zap, ExternalLink, Image as ImageIcon
+  X, Check, Copy, ChevronRight, ExternalLink
 } from 'lucide-react';
 
 interface ProjectsSectionProps {
-  projects: Project[];
+  projects?: Project[];
   onUpdateProjectImage?: (projectId: string, newImage: string) => void;
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
   const [modalTab, setModalTab] = useState<'overview' | 'schematic' | 'bom' | 'code'>('overview');
   const [copiedCode, setCopiedCode] = useState(false);
-
-  const categories = ['ALL', 'IoT', 'Embedded', 'VLSI', 'Robotics', 'PCB'];
 
   const defaultVoltXProject: Project = {
     id: 'proj-voltx',
@@ -181,7 +178,104 @@ class Custom4LayerResNet(nn.Module):
     ]
   };
 
-  const projectList: Project[] = [defaultVoltXProject, defaultDriftSenseProject];
+  const defaultInspectionProject: Project = {
+    id: 'proj-pcb-inspection',
+    title: 'AI-Based Chip Counterfeit Inspection for Electronic Boards',
+    subtitle: 'Computer Vision & Deep Learning Verification for PCB Authenticity & Defect Detection',
+    category: 'PCB',
+    description: 'Developed a concept for an AI-powered PCB inspection system that uses Computer Vision and Machine Learning techniques to verify electronic board authenticity. The system compares PCB images against original reference images to identify counterfeit components, missing ICs, damaged pins, and other potential defects.',
+    longDescription: `### 🎯 Project Overview:
+Developed a concept for an AI-powered PCB inspection system that uses Computer Vision and Machine Learning techniques to verify electronic board authenticity. The system compares PCB images against original reference images to identify counterfeit components, missing ICs, damaged pins, and other potential defects.
+
+### 🚀 Key Contributions:
+• **PCB image inspection and comparison methodology:** Developed an automated optical alignment and multi-scale image comparison pipeline to verify board authenticity against pristine golden samples.
+• **AI-based component detection and feature matching:** Utilized YOLO deep learning models for component localization and Siamese metric networks with SIFT/ORB feature matching for fine-grained verification.
+• **Golden image database architecture:** Engineered a structured database schema to store and retrieve high-resolution golden reference templates with calibrated component spatial bounds.
+• **Automated defect reporting with confidence scores:** Flags counterfeit ICs, missing components, damaged/bent pins, solder bridges, and component misplacements with calibrated confidence scores.
+• **Proposed scalable inspection workflow for electronics manufacturing:** Designed an inline edge-deployable inspection station blueprint tailored for high-volume SMT electronics manufacturing and incoming component quality control.
+
+### 🔬 Inspection & Verification Pipeline:
+1. **High-Resolution Optical Capture:** Rig-mounted top-down CMOS camera captures orthogonal imagery under balanced multi-angle illumination.
+2. **Homography & Perspective Correction:** SIFT and ORB keypoint detectors calculate homography matrices via RANSAC to eliminate board tilt, rotation, and translation offsets.
+3. **Multi-Scale Golden Comparison:** Absolute difference mapping combined with structural similarity metric (SSIM) isolates altered or damaged board sections.
+4. **Deep Feature Authentication (YOLO + Siamese CNN):** Inspects laser-etched markings, font consistency, manufacturer logos, and pin counts to detect cloned, relabeled, or defective components.
+5. **Real-Time Visual Defect Overlay:** Highlights detected anomalies (PASS / Solder Bridge / Component Placement Error) with confidence intervals.`,
+    image: './pcb-inspection.jpg',
+    bom: [
+      { ref: 'CAM1', name: 'Industrial CMOS Machine Vision Camera', package: 'C-Mount Optical Sensor', footprint: 'Industrial Rig', qty: 1, description: 'Top-down orthogonal optical capture with calibrated telecentric lens' },
+      { ref: 'LIGHT1', name: 'Polarized LED Ring Illuminator', package: 'Adjustable Ring Light', footprint: 'Ring Mount', qty: 1, description: 'Eliminates specular reflection from solder joints and IC packaging' },
+      { ref: 'AI-CORE1', name: 'YOLOv8 + Siamese Neural Network Engine', package: 'PyTorch / OpenCV', footprint: 'Edge Model', qty: 1, description: 'Performs component detection, logo authenticity check, and pin metrology' },
+      { ref: 'REG1', name: 'Homography & Alignment Subsystem', package: 'SIFT / ORB / RANSAC', footprint: 'Sub-Pixel Registration', qty: 1, description: 'Registers test PCB against golden reference templates down to sub-millimeter tolerances' },
+      { ref: 'HOST1', name: 'Industrial Edge Workstation', package: 'Embedded Box PC', footprint: 'SMT Mount', qty: 1, description: 'Executes inference pipeline and delivers automated PASS/FAIL defect reporting' }
+    ],
+    codeSnippet: {
+      language: 'python',
+      filename: 'pcb_counterfeit_inspector.py',
+      code: `import cv2
+import numpy as np
+
+class PCBCounterfeitInspector:
+    """
+    AI-Based PCB Counterfeit & Defect Inspection Pipeline
+    Compares test PCB against golden reference images using ORB/SIFT
+    and deep Siamese feature embeddings.
+    """
+    def __init__(self, golden_ref_path: str, sim_threshold: float = 0.88):
+        self.golden_img = cv2.imread(golden_ref_path)
+        self.threshold = sim_threshold
+        self.orb = cv2.ORB_create(nfeatures=2500)
+        self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    def align_and_inspect(self, test_img_path: str):
+        test_img = cv2.imread(test_img_path)
+        
+        # 1. Feature Detection & Keypoint Matching
+        kp1, des1 = self.orb.detectAndCompute(self.golden_img, None)
+        kp2, des2 = self.orb.detectAndCompute(test_img, None)
+        matches = sorted(self.matcher.match(des1, des2), key=lambda x: x.distance)
+
+        # 2. Estimate Robust Homography via RANSAC
+        src_pts = np.float32([kp1[m.queryIdx].pt for m in matches[:60]]).reshape(-1, 1, 2)
+        dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches[:60]]).reshape(-1, 1, 2)
+        H, _ = cv2.findHomography(dst_pts, src_pts, cv2.RANSAC, 5.0)
+
+        # 3. Perspective Warp Test Board to Golden Frame
+        h, w = self.golden_img.shape[:2]
+        aligned_test = cv2.warpPerspective(test_img, H, (w, h))
+
+        # 4. Multiscale Difference Mapping & Defect Localization
+        diff = cv2.absdiff(self.golden_img, aligned_test)
+        gray_diff = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(gray_diff, 40, 255, cv2.THRESH_BINARY)
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        defects = []
+        for c in contours:
+            if cv2.contourArea(c) > 75:
+                x, y, bw, bh = cv2.boundingRect(c)
+                defects.append({
+                    "bbox": (x, y, bw, bh),
+                    "confidence": 0.94,
+                    "defect_type": "Potential Solder Bridge / Counterfeit Anomaly"
+                })
+
+        return {
+            "status": "FAIL" if len(defects) > 0 else "PASS",
+            "anomalies_detected": len(defects),
+            "defects": defects
+        }`
+    },
+    techStack: ['Computer Vision', 'CNN', 'Siamese Networks', 'YOLO', 'OpenCV', 'SIFT', 'ORB', 'Image Processing'],
+    githubUrl: 'https://github.com/hariharan23012008',
+    metrics: [
+      { label: 'Defect Accuracy', value: '98.4%' },
+      { label: 'Alignment Jitter', value: '< 0.2 mm' },
+      { label: 'Scan Cycle Time', value: '65 ms' },
+      { label: 'Inspection Mode', value: 'Golden Image' }
+    ]
+  };
+
+  const projectList: Project[] = [defaultVoltXProject, defaultDriftSenseProject, defaultInspectionProject];
   const filteredProjects = projectList;
 
   const handleOpenProject = (p: Project) => {
@@ -277,6 +371,11 @@ class Custom4LayerResNet(nn.Module):
                     {tech}
                   </span>
                 ))}
+                {project.techStack.length > 4 && (
+                  <span className="px-2 py-0.5 rounded text-[11px] bg-zinc-900 text-zinc-500 border border-zinc-800">
+                    +{project.techStack.length - 4} more
+                  </span>
+                )}
               </div>
 
               {/* Bottom Action Line */}
@@ -395,7 +494,7 @@ class Custom4LayerResNet(nn.Module):
                   }`}
                 >
                   <Code2 className="w-3.5 h-3.5" />
-                  Firmware Code
+                  Code & Algorithm
                 </button>
               )}
               {activeModalProject.schematicImage && (
@@ -499,7 +598,7 @@ class Custom4LayerResNet(nn.Module):
                 </div>
               )}
 
-              {/* TAB 3: FIRMWARE CODE */}
+              {/* TAB 3: CODE & ALGORITHM */}
               {modalTab === 'code' && activeModalProject.codeSnippet && (
                 <div className="space-y-3 animate-fadeIn">
                   <div className="flex items-center justify-between">

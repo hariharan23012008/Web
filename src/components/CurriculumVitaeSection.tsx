@@ -58,3 +58,4 @@ export const CurriculumVitaeSection: React.FC = () => {
     </section>
   );
 };
+
