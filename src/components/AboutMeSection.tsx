@@ -53,17 +53,6 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ onOpen3DPCB }) =
                   alt="Hariharan K - Electronics Engineer"
                   className="w-full h-full object-cover object-top filter brightness-100 contrast-105 group-hover:scale-105 transition-transform duration-500"
                 />
-                
-                {/* Information Card Overlay */}
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent p-4 text-left border-t border-zinc-800">
-                  <div className="text-base font-bold text-white tracking-wide flex items-center justify-between">
-                    <span>Hariharan K</span>
-                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                  </div>
-                  <div className="text-xs text-zinc-400 mt-0.5">
-                    Chennai Institute of Technology (CIT)
-                  </div>
-                </div>
               </div>
             </div>
           </div>
